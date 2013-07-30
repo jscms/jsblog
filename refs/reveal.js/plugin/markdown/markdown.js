@@ -115,7 +115,7 @@
             // vertical
             else {
                 markdownSections += '<section '+ attributes +'>' +
-                                        '<section data-markdown>' +  sectionStack[k].map(twrap).join('</section><section data-markdown>') + '</section>' +
+                                        '<section>' +  sectionStack[k].map(twrap).join('</section><section>') + '</section>' +
                                     '</section>';
             }
         }
@@ -140,9 +140,8 @@
                 xhr.onreadystatechange = function () {
                     if( xhr.readyState === 4 ) {
                         if (xhr.status >= 200 && xhr.status < 300) {
-                            text=slidifyMarkdown( xhr.responseText, section.getAttribute('data-separator'), section.getAttribute('data-vertical'), getForwardedAttributes(section) );
+                            section.outerHTML = slidifyMarkdown( xhr.responseText, section.getAttribute('data-separator'), section.getAttribute('data-vertical'), getForwardedAttributes(section) );
 
-                            section.outerHTML = text;
                         } else {
                             section.outerHTML = '<section data-state="alert">ERROR: The attempt to fetch ' + url + ' failed with the HTTP status ' + xhr.status +
                                 '. Check your browser\'s JavaScript console for more details.' +
