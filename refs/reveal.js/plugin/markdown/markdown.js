@@ -6,6 +6,14 @@
         throw 'The reveal.js Markdown plugin requires marked to be loaded';
     }
 
+    if (typeof hljs !== 'undefined') {
+        marked.setOptions({
+            highlight: function (lang, code) {
+                return hljs.highlightAuto(lang, code).value;
+            }
+        });
+    }
+
     var stripLeadingWhitespace = function(section) {
 
         var template = section.querySelector( 'script' );
@@ -28,7 +36,8 @@
     };
 
     var twrap = function(el) {
-      return '<script type="text/template">' + el + '</script>';
+      //return '<script type="text/template">' + marked(el) + '</script>';
+      return marked(el);
     };
 
     var getForwardedAttributes = function(section) {
@@ -51,7 +60,7 @@
         }
 
         return result.join( ' ' );
-    }
+    };
 
     var slidifyMarkdown = function(markdown, separator, vertical, attributes) {
 
@@ -68,7 +77,7 @@
             markdownSections = '';
 
         // iterate until all blocks between separators are stacked up
-        while( matches = reSeparator.exec(markdown) ) {
+    while( matches = reSeparator.exec(markdown) ) {
 
             // determine direction (horizontal by default)
             isHorizontal = reHorSeparator.test(matches[0]);
@@ -101,7 +110,7 @@
         for( var k = 0, klen = sectionStack.length; k < klen; k++ ) {
             // horizontal
             if( typeof sectionStack[k] === 'string' ) {
-                markdownSections += '<section '+ attributes +' data-markdown>' +  twrap( sectionStack[k] )  + '</section>';
+                markdownSections += '<section '+ attributes +'>' +  twrap( sectionStack[k] )  + '</section>';
             }
             // vertical
             else {
@@ -112,7 +121,7 @@
         }
 
         return markdownSections;
-    };
+     };
 
     var querySlidingMarkdown = function() {
 
@@ -131,7 +140,9 @@
                 xhr.onreadystatechange = function () {
                     if( xhr.readyState === 4 ) {
                         if (xhr.status >= 200 && xhr.status < 300) {
-                            section.outerHTML = slidifyMarkdown( xhr.responseText, section.getAttribute('data-separator'), section.getAttribute('data-vertical'), getForwardedAttributes(section) );
+                            text=slidifyMarkdown( xhr.responseText, section.getAttribute('data-separator'), section.getAttribute('data-vertical'), getForwardedAttributes(section) );
+
+                            section.outerHTML = text;
                         } else {
                             section.outerHTML = '<section data-state="alert">ERROR: The attempt to fetch ' + url + ' failed with the HTTP status ' + xhr.status +
                                 '. Check your browser\'s JavaScript console for more details.' +
@@ -174,7 +185,7 @@
         var notes = section.querySelector( 'aside.notes' );
 
         var markdown = stripLeadingWhitespace(section);
-
+        
         section.innerHTML = marked(markdown);
 
         if( notes ) {
