@@ -1,5 +1,6 @@
 // From https://gist.github.com/1343518
 // Modified by Hakim to handle Markdown indented with tabs
+// Modified by Riceball to slidifyMarkdown automatically.
 (function(){
 
     if( typeof marked === 'undefined' ) {
@@ -7,6 +8,7 @@
     }
 
     if (typeof hljs !== 'undefined') {
+        console.log('highlight ok');
         marked.setOptions({
             highlight: function (lang, code) {
                 return hljs.highlightAuto(lang, code).value;
@@ -36,6 +38,7 @@
     };
 
     var twrap = function(el) {
+      //return '<script type="text/template">' + marked(el) + '</script>';
       return marked(el);
     };
 
@@ -77,7 +80,7 @@
             markdownSections = '';
 
         // iterate until all blocks between separators are stacked up
-        while( matches = reSeparator.exec(markdown) ) {
+        while(matches = reSeparator.exec(markdown)) {
 
             // determine direction (horizontal by default)
             isHorizontal = reHorSeparator.test(matches[0]);
@@ -100,7 +103,6 @@
 
             lastIndex = reSeparator.lastIndex;
             wasHorizontal = isHorizontal;
-
         }
 
         // add the remaining slide
@@ -110,12 +112,12 @@
         for( var k = 0, klen = sectionStack.length; k < klen; k++ ) {
             // horizontal
             if( typeof sectionStack[k] === 'string' ) {
-                markdownSections += '<section '+ attributes +'>' +  twrap( sectionStack[k] )  + '</section>';
+                markdownSections += '<section '+ attributes +'>' +  marked( sectionStack[k] )  + '</section>';
             }
             // vertical
             else {
                 markdownSections += '<section '+ attributes +'>' +
-                                        '<section>' +  sectionStack[k].map(twrap).join('</section><section>') + '</section>' +
+                                      '<section>' +  sectionStack[k].map(twrap).join('</section><section>') + '</section>' +
                                     '</section>';
             }
         }
@@ -123,19 +125,51 @@
         return markdownSections;
     };
 
-    var slidifyMarkdown = function(markdown, separator, vertical, attributes) {
+    var slidifyMarkdown = function(markdown, separator, vertical, attributes, columnCount) {
         if (separator) {
-          slidifyMarkdownManually();
+          return slidifyMarkdownManually(markdown, separator, vertical, attributes);
         }
         else {
           var conf = Reveal.getConfig();
-          var slideHeight = conf.height*(1-conf.margin);
+          var slideHeight = conf.height*(0.935-conf.margin);
           var markdownSections = "";
-          var $cache = $("<div></div>");
+          var $cache = $("<div id='xxcache' class='slides'></div>").css("visibility", "hidden");
+          var $body = $("div.reveal");
+          if ($.isNumeric(columnCount))
+              columnCount = parseInt(columns, 0);
+          else
+              columnCount = 1;
           $cache.append(marked(markdown));
-          $cache.find('table, thead, tbody, tfoot, colgroup, caption, label, legend, script, style, textarea, button, object, embed, tr, th, td, li, h1, h2, h3, h4, h5, h6, form').addClass('dontsplit');
+          $cache.find('table, thead, tbody, tfoot, colgroup, caption, label, legend, script, style, textarea, button, object, embed, tr, th, td, li, h1, h2, h3, h4, h5, h6, form, code').addClass('dontsplit');
           $cache.find('h1, h2, h3, h4, h5, h6').addClass('dontend');
           $cache.find('br').addClass('removeiflast').addClass('removeiffirst');
+          $sections=$("<div></div>").css("display", "block");
+          $body.append($cache);
+          $body.append($sections);
+          function buildPage() {
+              if ($cache.contents().length > 0) {
+                  var $page = $("<section></section>");
+                  $sections.append($page);
+                  $('#xxcache').columnize({
+                      columns: columnCount,
+                      target: $sections.find("section:last"),
+                      overflow: {
+                          height: slideHeight,
+                          id: '#xxcache',
+                          doneFunc: function(){
+                              console.log("done with a page");
+                              buildPage();
+                          }
+                      }
+                  });
+              }
+          }
+          buildPage();
+          var s = $sections.html();
+          $sections.remove();
+          $cache.remove();
+
+          return '<section '+ attributes +'>'+s+'</section>';
           
         }
     };
