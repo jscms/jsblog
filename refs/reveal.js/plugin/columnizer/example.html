@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - Markdown Demo</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="../../css/reveal.css">
+		<link rel="stylesheet" href="../../css/theme/default.css" id="theme">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="../../css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script> 
+    <!--[if lt IE 9]>
+		<script src="../../lib/js/html5shiv.js"></script>
+		<![endif]--> 
+  </head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+
+                <!-- Use external markdown resource, pagination automatically vertical slides -->
+                <section data-markdown="example.md" data-vertical></section>
+                 <!-- Use external markdown resource, pagination automatically
+                      horizontal slides, 3 columns each side -->
+                <section data-markdown="example.md" data-columns="3"></section> 
+                <!-- pagination automatically horizontal slides -->
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Demo 1
+                        Slide 1
+                        ---
+                        ## Demo 1
+                        Slide 2
+                        ---
+                        ## Demo 1
+                        Slide 3
+                    </script>
+                </section>
+
+                <!-- Manual Slides are separated by newline + three dashes + newline,
+                     vertical slides identical but two dashes -->
+                <section data-markdown data-separator="^\n---\n$" data-vertical="^\n--\n$">
+                    <script type="text/template">
+                        ## Demo 2
+                        Slide 1.1
+
+                        --
+
+                        ## Demo 2
+                        Slide 1.2
+
+                        ---
+
+                        ## Demo 2
+                        Slide 2
+                    </script>
+                </section>
+            </div>
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.js"></script>
+
+		<script>
+
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme,
+				transition: Reveal.getQueryHash().transition || 'default',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
