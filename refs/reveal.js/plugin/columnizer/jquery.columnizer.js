@@ -50,7 +50,8 @@
 	}
 
     return this.each(function() {
-		var $inBox = options.target ? $(options.target) : $(this);
+		var $inBox = options.target ? options.target : $(this);
+        if (typeof($inBox) == "string") $inBox = $($inBox);
 		var maxHeight = $(this).height();
 		var $cache = $('<div></div>'); // this is where we'll put the real content
 		var lastWidth = 0;
@@ -333,7 +334,7 @@
 					div.appendChild($destroyable[0].childNodes[0]);
 					html += div.innerHTML;
 				}
-				var overflow = $(options.overflow.id)[0];
+				var overflow = typeof(options.overflow.id) == "string" ? $(options.overflow.id)[0] : options.overflow.id;
 				overflow.innerHTML = html;
 
 			}else{
