@@ -61,13 +61,14 @@
             }
         }
 
-        return result.join( ' ' );
+        return result;//result.join( ' ' );
     };
 
 
     var slidifyMarkdownManually = function(markdown, separator, vertical, attributes) {
       
         separator = separator || '^\n---\n$';
+        attributes = attributes.join(' ');
 
         var reSeparator = new RegExp(separator + (vertical ? '|' + vertical : ''), 'mg'),
             reHorSeparator = new RegExp(separator),
@@ -132,32 +133,34 @@
         else {
           var conf = Reveal.getConfig();
           var slideHeight = conf.height*(0.935-conf.margin);
+          var slideWidth  = conf.width*(0.935-conf.margin);
           var markdownSections = "";
-          var $cache = $("<div id='xxcache' class='slides'></div>").css("visibility", "hidden");
+          var $cache = $("<div id='_smdcache' class='slides'></div>").css("visibility", "hidden");
           var $body = $("div.reveal");
           if ($.isNumeric(columnCount))
-              columnCount = parseInt(columns, 0);
+              columnCount = parseInt(columnCount, 0);
           else
               columnCount = 1;
           $cache.append(marked(markdown));
           $cache.find('table, thead, tbody, tfoot, colgroup, caption, label, legend, script, style, textarea, button, object, embed, tr, th, td, li, h1, h2, h3, h4, h5, h6, form, code').addClass('dontsplit');
           $cache.find('h1, h2, h3, h4, h5, h6').addClass('dontend');
           $cache.find('br').addClass('removeiflast').addClass('removeiffirst');
-          $sections=$("<div></div>").css("display", "block");
+          var $sections=$("<div></div>").css("display", "block");
           $body.append($cache);
           $body.append($sections);
           function buildPage() {
               if ($cache.contents().length > 0) {
                   var $page = $("<section></section>");
                   $sections.append($page);
-                  $('#xxcache').columnize({
+                  $('#_smdcache').columnize({
                       columns: columnCount,
                       target: $sections.find("section:last"),
                       overflow: {
                           height: slideHeight,
-                          id: '#xxcache',
+                          width: slideWidth,
+                          id: '#_smdcache',
                           doneFunc: function(){
-                              console.log("done with a page");
+                              //console.log("done with a page");
                               buildPage();
                           }
                       }
@@ -168,34 +171,34 @@
           var s = $sections.html();
           $sections.remove();
           $cache.remove();
+          if (typeof(vertical) !== "undefined")
+              s = '<section '+ attributes.join(' ') +'>'+s+'</section>';
 
-          return '<section '+ attributes +'>'+s+'</section>';
+          return s;
           
         }
     };
 
     var querySlidingMarkdown = function() {
 
-        var sections = document.querySelectorAll( '[data-markdown]'),
-            section;
+        var sections = $('[data-markdown]');//document.querySelectorAll( '[data-markdown]'),
 
-        for( var j = 0, jlen = sections.length; j < jlen; j++ ) {
+        $.each(sections, function(index, section){
+            var $section = $(section);
 
-            section = sections[j];
-
-            if( section.getAttribute('data-markdown').length ) {
+            if( $section.attr('data-markdown').length ) {
 
                 var xhr = new XMLHttpRequest(),
-                    url = section.getAttribute('data-markdown');
+                    url = $section.attr('data-markdown');
 
                 xhr.onreadystatechange = function () {
                     if( xhr.readyState === 4 ) {
                         if (xhr.status >= 200 && xhr.status < 300) {
-                            section.outerHTML = slidifyMarkdown( xhr.responseText, section.getAttribute('data-separator'), section.getAttribute('data-vertical'), getForwardedAttributes(section) );
+                            $section.replaceWith(slidifyMarkdown( xhr.responseText, $section.data('separator'), $section.data('vertical'), getForwardedAttributes(section), $section.data('columns') ));
                         } else {
-                            section.outerHTML = '<section data-state="alert">ERROR: The attempt to fetch ' + url + ' failed with the HTTP status ' + xhr.status +
+                            $section.replaceWith('<section data-state="alert">ERROR: The attempt to fetch ' + url + ' failed with the HTTP status ' + xhr.status +
                                 '. Check your browser\'s JavaScript console for more details.' +
-                                '<p>Remember that you need to serve the presentation HTML from a HTTP server and the Markdown file must be there too.</p></section>';
+                                '<p>Remember that you need to serve the presentation HTML from a HTTP server and the Markdown file must be there too.</p></section>');
                         }
                     }
                 };
@@ -207,13 +210,13 @@
                     alert('Failed to get the Markdown file ' + url + '. Make sure that the presentation and the file are served by a HTTP server and the file can be found there. ' + e);
                 }
 
-            } else if( section.getAttribute('data-separator') ) {
+            } else if( $section.data('separator') ) {
 
                 var markdown = stripLeadingWhitespace(section);
-                section.outerHTML = slidifyMarkdown( markdown, section.getAttribute('data-separator'), section.getAttribute('data-vertical'), getForwardedAttributes(section) );
+                section.outerHTML = slidifyMarkdown( markdown, $section.data('separator'), $section.data('vertical'), getForwardedAttributes(section), $section.data('columns') );
 
             }
-        }
+        });
 
     };
 
