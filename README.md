@@ -82,7 +82,7 @@ Within the templates and pages, every collection is available globally via their
            <li><a href="{{url}}">{{title}}</a></li>
          {{/ pages.all }}
         </ul>
-  
+
         <ul>
          {{# posts/sths.all }}
            <li><a href="{{url}}">{{title}}</a></li>
@@ -108,3 +108,5 @@ Custom programming logic can be added easily via the plugin architecture. You'd 
 * plugins/
 * themes/
 * widgets/
+
+
