@@ -5,12 +5,13 @@
     "angular": "~1.0.7",
     "json3": "~3.2.4",
     "jquery": "~1.9.1",
-    "bootstrap-sass": "http://github.com/jlong/sass-twitter-bootstrap.git",
+    "bootstrap-sass": "~2.3.2",
     "es5-shim": "~2.0.8",
     "angular-resource": "~1.0.7",
     "angular-cookies": "~1.0.7",
     "angular-sanitize": "~1.0.7",
-    "jade": "~0.34.1"
+    "jade": "~0.34.1",
+    "angular-ui": "~0.4.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.0.7",
