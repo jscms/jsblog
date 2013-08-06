@@ -98,13 +98,27 @@ CategoryPage(CollectionPage):
   * Author
   * Summary
   
-
-
 Generation files:
 
-* index.json:
-  * the subdirs and pages info in the current directory
-* xxx.html
+* authors.json
+* langs.json
+* index.html
+* [lang]/index.json: the subdirs and pages info in the current directory.
+  * dirs:
+    * name/slug:
+    * title
+    * summary:
+    * date
+    * count: integer
+    * tags:
+  * pages:
+    * name/slug:
+    * title
+    * authors
+    * date
+    * summary:
+    * tags:
+* [lang]/xxx.html
   * the article content
 
 
