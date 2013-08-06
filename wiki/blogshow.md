@@ -122,3 +122,10 @@ Generation files:
   * the article content
 
 
+### Dev Misc
+
+yo angular jsBlog --coffee
+npm install xxx --save-dev
+bower install xxx --save
+bower install supports git://xxxx
+
