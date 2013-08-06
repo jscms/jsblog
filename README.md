@@ -14,7 +14,7 @@ The static site generator writen via javascript.
     * Comment/Discuss/Review
     * Forum
   * View/Presentation Collection
-    * Layout Collection
+    * Layout
     * Partial(Includes)
     * Javascript
     * Stylesheet
@@ -68,7 +68,7 @@ Themes enable a 'plug-and-play' modular architecture. Users are able to create a
 
 ### Cool Impress Theme
 
-Use left("<-") and right("->"), up and down key to navigate throughout site. 
+Use left and right, up and down key to navigate throughout site. 
 
 
 ## Template
