@@ -185,7 +185,7 @@ module.exports = function (grunt) {
           client: false,
           basePath: '<%= yeoman.app %>/',
           locals: {
-            title: "jsBlog"
+            title: 'jsBlog'
           }
         }
       }
