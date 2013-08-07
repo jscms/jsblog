@@ -97,79 +97,11 @@ CategoryPage(CollectionPage):
   * Date(If this is a category?)
   * Author
   * Summary
-<<<<<<< Local Changes
 * Navbar()
-* 
-=======
-  
-<<<<<<< Local Changes
-Generation files:
->>>>>>> External Changes
-=======
-Generation files:
->>>>>>> External Changes
+ 
 
-<<<<<<< Local Changes
-<<<<<<< Local Changes
-
-<<<<<<< Local Changes
-<<<<<<< Local Changes
-<<<<<<< Local Changes
-<<<<<<< Local Changes
-<<<<<<< Local Changes
-<<<<<<< Local Changes
 Generation files:
 
-* index.json:
-
-=======
-Generation files:
-
-* index.json:
-  the subdirs and pages in the current directory 
-
->>>>>>> External Changes
-=======
-Generation files:
-
-* index.json:
-  * the subdirs and pages in the current directory 
-
->>>>>>> External Changes
-=======
-Generation files:
-
-* index.json:
-  * the subdirs and pages info in the current directory 
-
->>>>>>> External Changes
-=======
-Generation files:
-
-* index.json:
-  * the subdirs and pages info in the current directory
-* xxx.html
-
->>>>>>> External Changes
-=======
-Generation files:
-
-* index.json:
-  * the subdirs and pages info in the current directory
-* xxx.html
-  * the article content
-
->>>>>>> External Changes
-=======
-Generation files:
-
-* index.json:
-  * the subdirs and pages info in the current directory
-* xxx.html
-  * the article content
-
->>>>>>> External Changes
-=======
 * authors.json
 * langs.json
 * index.html
@@ -191,35 +123,6 @@ Generation files:
 * [lang]/xxx.html
   * the article content
 
-
-### Dev Misc
-
-yo angular jsBlog --coffee
-npm install xxx --save-dev
-bower install xxx --save
-bower install supports git://xxxx
->>>>>>> External Changes
-=======
-* authors.json
-* langs.json
-* index.html
-* [lang]/index.json: the subdirs and pages info in the current directory.
-  * dirs:
-    * name/slug:
-    * title
-    * summary:
-    * date
-    * count: integer
-    * tags:
-  * pages:
-    * name/slug:
-    * title
-    * authors
-    * date
-    * summary:
-    * tags:
-* [lang]/xxx.html
-  * the article content
 
 
 
