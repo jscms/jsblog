@@ -153,3 +153,4 @@ use foundation css framework:
 
    //"bootstrap-sass": "http://github.com/jlong/sass-twitter-bootstrap.git",
    https://github.com/nu7hatch/angular-foundation-on-yeoman
+   http://stackoverflow.com/questions/14602156/angularjs-with-reveal-js
