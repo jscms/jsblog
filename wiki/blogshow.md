@@ -155,3 +155,9 @@ use foundation css framework:
    https://github.com/nu7hatch/angular-foundation-on-yeoman
    http://stackoverflow.com/questions/14602156/angularjs-with-reveal-js
    http://www.yearofmoo.com/2012/10/more-angularjs-magic-to-supercharge-your-webapp.html#how-to-make-sure-your-directives-are-run-after-your-scope-is-ready
+
+      reveal.js git://github.com/hakimel/reveal.js/
+      zurb-reveal git://github.com/zurb/reveal.git
+      nucleus-angular-revealing-panel git://github.com/nucleus-angular/revealing-panel.git
+      jquery-reveal git://github.com/VitalikL/reveal.git
+
