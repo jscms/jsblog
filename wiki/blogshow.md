@@ -154,3 +154,4 @@ use foundation css framework:
    //"bootstrap-sass": "http://github.com/jlong/sass-twitter-bootstrap.git",
    https://github.com/nu7hatch/angular-foundation-on-yeoman
    http://stackoverflow.com/questions/14602156/angularjs-with-reveal-js
+   http://www.yearofmoo.com/2012/10/more-angularjs-magic-to-supercharge-your-webapp.html#how-to-make-sure-your-directives-are-run-after-your-scope-is-ready
