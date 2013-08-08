@@ -161,4 +161,20 @@ use foundation css framework:
       nucleus-angular-revealing-panel git://github.com/nucleus-angular/revealing-panel.git
       jquery-reveal git://github.com/VitalikL/reveal.git
       https://github.com/harvesthq/chosen
-
+      https://github.com/kamens/jQuery-menu-aim
+      inspector tool: angularjs-batarang
+      https://github.com/daneroo/im-dash
+      https://github.com/jogloran/angular-presentation
+      http://worrydream.com/Tangle/
+      https://github.com/okfn/timeliner
+      https://github.com/danvk/dygraphs/
+      http://www.simile-widgets.org/timeplot/
+      http://worrydream.com/
+      http://worrydream.com/Home2011/
+      https://www.khanacademy.org/cs
+      https://github.com/Khan/khan-exercises
+      https://cmn.khanacademy.org/
+      https://github.com/musicalglass/AKA/wiki/Processing-JS
+      http://ink.sapo.pt/ resposive navbar
+      https://github.com/sapo/ink
+      http://badassjs.com/
