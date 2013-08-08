@@ -1,7 +1,9 @@
-$iconSpritePath: "../images/glyphicons-halflings.png";
-$iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
+//$iconSpritePath: "../images/glyphicons-halflings.png";
+//$iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
+$GlyphiconsPath: "./fonts";
 
 @import "bootstrap-sass/lib/bootstrap";
+@import "sass-bootstrap-glyphicons/scss/bootstrap-glyphicons";
 
 /* Put your CSS here */
 html, body {
