@@ -143,7 +143,7 @@ bower install supports git://xxxx
     * Angular
     * Docpad
   * CSS
-    * Bootstrap/Foundation?
+    * groundwork/Bootstrap?/Foundation?
 
 use foundation css framework: 
 
