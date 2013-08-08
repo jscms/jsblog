@@ -160,4 +160,5 @@ use foundation css framework:
       zurb-reveal git://github.com/zurb/reveal.git
       nucleus-angular-revealing-panel git://github.com/nucleus-angular/revealing-panel.git
       jquery-reveal git://github.com/VitalikL/reveal.git
+      https://github.com/harvesthq/chosen
 
