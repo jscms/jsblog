@@ -123,8 +123,40 @@ Generation files:
 * [lang]/xxx.html
   * the article content
 
+### Workflow
 
+#### Layout
 
+* Navbar
+* //breadcrumbs?
+* Content
+  * For Index
+    * Picture/Thumnail?
+    * Title
+    * Url
+    * IsFolder
+    * Summary
+  * For Markdown
+
+* View
+  * Control Bar
+    * Navigator
+  * Index Item
+    * Bordered
+    * Pictured
+    * Summaried
+  * Post/Page
+    * PageFlipped
+
+* http://vegas.jaysalvat.com/ :Vegas Background jQuery Plugin
+  https://github.com/jaysalvat/vegas
+  也可以参考用在IndexItem上，作为Picture和html的叠加.
+* http://responsiveslides.com/
+* http://alexdunphy.github.io/refineslide/ 3D slideshow
+* https://github.com/passy/angular-masonry 把elements堆成砖块
+* http://collageplus.edlea.com/ 这个对于图像的堆叠更好支持自适应。
+* https://github.com/localmotors/quantum-angularity AngularJS image gallery 计划了很多功能
+* http://benjaminmock.de/bezoom-jquery-plugin/ 放大镜
 
 ### Dev Misc
 
@@ -144,6 +176,18 @@ bower install supports git://xxxx
     * Docpad
   * CSS
     * groundwork/Bootstrap?/Foundation?
+    * http://css-tricks.com/triangle-breadcrumbs/
+    * http://thecodeplayer.com/walkthrough/css3-breadcrumb-navigation
+    * http://www.hongkiat.com/blog/breadcrumb-menu-css3/
+    * https://techinterviewpuzzles.appspot.com/articles/CSS/6-graceful-css-breadcrumb-Navigation-designs
+    * 智能响应的面包屑 Smart Responsive Breadcrumbs http://www.planetree.cn/article/details/11
+    * http://bradfrost.github.io/this-is-responsive/patterns.html
+    * http://www.w3cplus.com/demo/CSS3-Animation-Breadcrumbs.html
+    * http://galleria.io/docs/  https://github.com/aino/galleria
+    * http://blueimp.github.io/Gallery/
+    * https://github.com/ed-lea/jquery-collagePlus/ : 还没有box to view.
+    * https://github.com/fiestah/angular-gallery-directive
+      可以参考他怎么去写angular指令的.
 
 use foundation css framework: 
 
@@ -178,3 +222,177 @@ use foundation css framework:
       http://ink.sapo.pt/ resposive navbar
       https://github.com/sapo/ink
       http://badassjs.com/
+      https://github.com/olton/Metro-UI-CSS
+      http://www.w3cplus.com/MetroUICSS/ Metro UI CSS中文版
+
+
+#### CSS breadcrumbs
+
+##### jsfiddle.net/nicooprat/WMMyu/
+
+```html
+<p id="breadcrumb">
+    <a href="#">Home</a>
+    <a href="#">Grandpa</a>
+    <a href="#">Father</a>
+    <a href="#">Son</a>
+    Product
+</p
+```
+
+```scss
+$linkColorHover: #00b0ec;
+$gray: #F0F0F0;
+$gray2: #aaa;
+
+body {
+    padding: 40px;
+    font-family: Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+#breadcrumb {
+    margin-bottom: 20px;
+    line-height: 30px;
+    color: $gray2;
+    padding: 1px;
+    border: 1px solid $gray;
+    
+    a {
+        display: block;
+        float: left;
+        background: $gray;
+        padding-right: 10px;
+        height: 30px;
+        margin-right: 31px;
+        position: relative;
+        text-decoration: none;
+        color: $gray2;
+        
+        &:last-of-type {
+            margin-right: 25px;
+        }
+        
+        &:before {
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            position: absolute;
+            top: 0;
+            left: -30px;
+            border: 15px solid transparent;
+            border-color: $gray;
+            border-left-color: transparent;
+        }
+        
+        &:after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            position: absolute;
+            top: 0;
+            right: -30px;
+            border: 15px solid transparent;
+            border-left-color: $gray;
+        }
+        
+        &:first-of-type {
+            padding-left: 15px;
+            
+            &:before {
+                display: none;
+            }
+        }
+        
+        &:hover {
+            background: $linkColorHover;
+            color: #fff;
+            text-decoration: none;
+            
+            &:before {
+                border-color: $linkColorHover;
+                border-left-color: transparent;
+            }
+            
+            &:after {
+                border-left-color: $linkColorHover;
+            }
+        }
+    }
+}
+```
+
+##### http://css-tricks.com/triangle-breadcrumbs/
+
+```css
+		.breadcrumb { 
+			list-style: none; 
+			overflow: hidden; 
+			font: 18px Helvetica, Arial, Sans-Serif;
+		}
+		.breadcrumb li { 
+			float: left; 
+		}
+		.breadcrumb li a {
+			color: white;
+			text-decoration: none; 
+			padding: 10px 0 10px 55px;
+			background: brown;                   /* fallback color */
+			background: hsla(34,85%,35%,1); 
+			position: relative; 
+			display: block;
+			float: left;
+		}
+		.breadcrumb li a:after { 
+			content: " "; 
+			display: block; 
+			width: 0; 
+			height: 0;
+			border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
+			border-bottom: 50px solid transparent;
+			border-left: 30px solid hsla(34,85%,35%,1);
+			position: absolute;
+			top: 50%;
+			margin-top: -50px; 
+			left: 100%;
+			z-index: 2; 
+		}	
+		.breadcrumb li a:before { 
+			content: " "; 
+			display: block; 
+			width: 0; 
+			height: 0;
+			border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
+			border-bottom: 50px solid transparent;
+			border-left: 30px solid white;
+			position: absolute;
+			top: 50%;
+			margin-top: -50px; 
+			margin-left: 1px;
+			left: 100%;
+			z-index: 1; 
+		}	
+		.breadcrumb li:first-child a {
+			padding-left: 10px;
+		}
+		.breadcrumb li:nth-child(2) a       { background:        hsla(34,85%,45%,1); }
+		.breadcrumb li:nth-child(2) a:after { border-left-color: hsla(34,85%,45%,1); }
+		.breadcrumb li:nth-child(3) a       { background:        hsla(34,85%,55%,1); }
+		.breadcrumb li:nth-child(3) a:after { border-left-color: hsla(34,85%,55%,1); }
+		.breadcrumb li:nth-child(4) a       { background:        hsla(34,85%,65%,1); }
+		.breadcrumb li:nth-child(4) a:after { border-left-color: hsla(34,85%,65%,1); }
+		.breadcrumb li:nth-child(5) a       { background:        hsla(34,85%,75%,1); }
+		.breadcrumb li:nth-child(5) a:after { border-left-color: hsla(34,85%,75%,1); }
+		.breadcrumb li:last-child a {
+			background: transparent !important;
+			color: black;
+			pointer-events: none;
+			cursor: default;
+		}
+		.breadcrumb li:last-child a:after { border: 0; }
+		.breadcrumb li a:hover { background: hsla(34,85%,25%,1); }
+		.breadcrumb li a:hover:after { border-left-color: hsla(34,85%,25%,1) !important; }
+
+```
