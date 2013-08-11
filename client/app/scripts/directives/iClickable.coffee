@@ -1,3 +1,6 @@
+#https://github.com/angular-ui/ui-codemirror/blob/master/ui-codemirror.js
+#https://github.com/angular-ui/bootstrap/blob/master/src/buttons/buttons.js
+#https://github.com/angular/angular.js/blob/master/src/ng/directive/input.js
 angular.module('iReactive', [])
     .constant(clickableConfig, {})
     .directive('iClickable', ['clickableConfig', '$timeout', (clickableConfig, $timeout) ->
