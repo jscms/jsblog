@@ -224,6 +224,9 @@ use foundation css framework:
       http://badassjs.com/
       https://github.com/olton/Metro-UI-CSS
       http://www.w3cplus.com/MetroUICSS/ Metro UI CSS中文版
+      http://jsfiddle.net/highcharts/AyUbx/
+      http://rabidgadfly.com/ perfect for angularjs tut
+      rename ngMobile to ngTouch now in git 
 
 
 #### CSS breadcrumbs
