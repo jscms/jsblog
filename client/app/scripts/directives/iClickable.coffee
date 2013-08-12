@@ -1,8 +1,9 @@
 #https://github.com/angular-ui/ui-codemirror/blob/master/ui-codemirror.js
 #https://github.com/angular-ui/bootstrap/blob/master/src/buttons/buttons.js
 #https://github.com/angular/angular.js/blob/master/src/ng/directive/input.js
-#http://jsfiddle.net/dalcib/6kabF/2/
+#http://jsfiddle.net/dalcib/6kabF/2/   -- 
 #http://jsfiddle.net/simpulton/GeAAB/  -- sharemsg
+#http://jsfiddle.net/simpulton/EMA5X/  -- animateoin
 ###
 http://jsfiddle.net/vojtajina/YdAsa/
 Binding directive from another directive
