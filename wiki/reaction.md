@@ -8,12 +8,13 @@
 * i-slidable
 * i-playable
   * bind: variable
-  * range: "10..100 by 2"
-  * _lowest: 10
-  * _lowestIn: true
-  * _highest: 100
-  * _highestIn: true
-  * _step: 2_
+  * //range: "10..100 by 2" put it into markdown parse
+  * range: [lowest, highest, step, lowestIn, highestIn]
+    * lowest: 10, null means no limits
+    * highest: 100
+    * step: 2, null means step = 1
+    * lowestIn: true, null means true
+    * highestIn: true
 * i-show-changed: to show the changed value in document.
   * delay: show time.
   * effect: fade

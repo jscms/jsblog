@@ -44,12 +44,12 @@ angular.module('iReactive', [])
                 return {}
             if angular.isDefined(opts.bind) and angular.isDefined(opts.range)
                 opts = angular.extend(opts, parseRange(opts.range))
-                clickingCallback = (ele) ->
+                clickingCallback = (el) ->
                     # In clickingCallback, if you are changing any model/scope data, you'll want to call scope.$apply(), or put the contents of the method inside scope.$apply(function() { ...contents here...});
                     alert('clicked')
                 element.bind('click', clickingCallback);
                 attrs.$observe(opts.bind, (value) ->
                     if (value)
-                        #fff
+                        alert(value)
                 ) 
     )]
