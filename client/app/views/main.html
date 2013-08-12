@@ -1,5 +1,6 @@
 <div class="hero-unit">
-  <h1>'Allo, 'Allo!</h1>
+  <input type="number" ng-model="myvar"/>
+  <h1 ng-bind-template="hi {{myvar}}!" i-clickable="{bind:'myvar', range:[1,3]}">'Allo, 'Allo!</h1>
   <p>You now have</p>
   <ul>
       <li class="glyphicon glyphicon-ok" ng-repeat="thing in awesomeThings">{{thing}}</li>
