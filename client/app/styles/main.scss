@@ -8,6 +8,11 @@ $GlyphiconsPath: "./fonts";
 @import "bootstrap-sass/lib/bootstrap";
 @import "sass-bootstrap-glyphicons/scss/bootstrap-glyphicons";
 
+$element_color              : rgba(0,0,255,0.3);
+$element_hover_color        : rgba(0,0,255,1);
+$element_active_color       : rgba(0,0,190,1);
+$read_only_element_color    : rgba(130,130,130,0.4);
+
 /* Put your CSS here */
 html, body {
   margin: 20px;
@@ -17,6 +22,30 @@ body {
     background: #fafafa;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #333;
+}
+
+.i-clickable {
+    display: inline;
+    border-bottom: 1px dotted $element_color;
+    position: relative;
+    cursor: pointer;
+    @include transition(background-color 0.5s linear);
+    background-color: transparent;
+
+    &.readonly {
+        border-bottom-color: $read_only_element_color;
+    }
+
+    &.editable {
+        &:hover {
+            color: $element_hover_color;
+            border-bottom: 1px solid $element_hover_color;
+        }
+        &.active {
+            color: $element_active_color;
+            border-bottom: 1px solid $element_active_color;
+        }
+    }
 }
 
 .hero-unit {
