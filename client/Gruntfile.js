@@ -263,6 +263,13 @@ module.exports = function (grunt) {
         files: [
           {
             expand: true,
+            cwd: '<%= yeoman.app %>/bower_components/sass-bootstrap-glyphicons',
+            dest: '<%= yeoman.app %>/styles',
+            src: [
+              'fonts/*'
+            ]
+          }, {
+            expand: true,
             dot: true,
             cwd: '<%= yeoman.app %>',
             dest: '<%= yeoman.dist %>',
@@ -272,13 +279,6 @@ module.exports = function (grunt) {
               'bower_components/**/*',
               'images/{,*/}*.{gif,webp}',
               'styles/fonts/*'
-            ]
-          }, {
-            expand: true,
-            cwd: '<%= yeoman.app %>/bower_components/sass-bootstrap-glyphicons',
-            dest: '<%= yeoman.dist %>/styles',
-            src: [
-              'fonts/*'
             ]
           }, {
             expand: true,
