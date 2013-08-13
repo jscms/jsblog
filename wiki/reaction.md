@@ -4,20 +4,39 @@
 
 ## Angular Directives
 
-* i-clickable
-* i-slidable
-* i-playable
+    <i-clickable bind="myvar" range="[1,2,3]"></i-clickable>
+    <div i-clickable='bind="myvar" range="[1,2,3]"'></div>
+
+Note: attr > value
+
+    <div i-clickable='bind="myvar"'  bind="myv1"></div>
+
+    the real bind is "myv1"
+
+* i-clickable/i-slidable/i-playable
+
   * bind: variable
+  * readonly: true/false
+  * values: 
+    * null: a number ForLoop
+    * array: In a List, [1,3,4,8]
+    * function
+      * In a custom rangeFunc:
+          rangeFn = (value, config)->
+            # get the new value
+            value+1
   * //range: "10..100 by 2" put it into markdown parse
-  * range: [lowest, highest, step, lowestIn, highestIn]
-    * lowest: 10, null means no limits
-    * highest: 100
-    * step: 2, null means step = 1
-    * lowestIn: true, null means true
-    * highestIn: true
+  * range(attr): 
+    * {min:-Infinity, max: Infinity, step: 1, minIn: true, maxIn: true}
+      * min: 10, -Infinity means no limits
+      * max: 100, Infinity means no limits
+      * step: 2, null means step = 1
+      * minIn: true, null means true
+      * maxIn: true
 * i-show-changed: to show the changed value in document.
   * delay: show time.
   * effect: fade
+
 
 * act-click
 * act-slide
