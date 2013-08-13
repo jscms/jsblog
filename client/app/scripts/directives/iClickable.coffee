@@ -31,53 +31,83 @@ angular.directive('second', function(expression, element) {
 ###
 angular.module('iReactive', [])
     .constant('clickableConfig', {
-        # lowest, highest, step, lowestIn, highestIn
-        # null means no limited
-        range: [-Infinity, Infinity, 1, true, true]
+        readonly: false,
+        index: undefined,
+        # the values can be null, array and function
+        #   * null: means it's a number
+        #   * array: means it's a list, the item is picked from it. the index is the current item.
+        #   * function: means get next value from it.
+        values: null,
+        # the range may be a object, a list or a func
+        # the default is a object
+        range: {min: -Infinity, max: Infinity, step: 1, minIn: true, maxIn: true}
     })
     .directive('iClickable', ['clickableConfig', '$timeout', (clickableConfig, $timeout) ->
         'use strict'
 
-        restrict: 'A'
+        restrict: 'AE'
         #require: 'ngModel'
         link: ($scope, element, attrs) ->
-            options = clickableConfig || {}
-            opts    = angular.extend({}, options, $scope.$eval(attrs.iClickable))
-            range   = opts.range
-            Array::push.apply(range, clickableConfig.range[range.length..]) if range.length < clickableConfig.range.length
 
-            applyRange = (value, range) ->
+            options = angular.extend({}, clickableConfig, $scope.$eval(attrs.iClickable))
+            options.bind = attrs.bind if attrs.bind
+            options.readonly = $scope.$eval(attrs.readonly) if attrs.readonly
+            options.range = angular.extend(clickableConfig.range, options.range, $scope.$eval(attrs.range))
+            options.values = $scope.$eval(attrs.values) if attrs.values
+            #if range.length < clickableConfig.range.length
+            #   Array::push.apply(range, clickableConfig.range[range.length..])
+
+            getNextValueInLoop = (value, config) ->
                 if angular.isNumber value
-                    minV = range[0]
-                    maxV = range[1]
-                    step = range[2]
-                    lowestIn  = range[3]
-                    highestIn = range[4]
-                    value += step
-                    if step > 0       # step > 0?
-                        if (value < minV) or (value >= maxV)
-                            value = minV if value != maxV or !highestIn
-                            value += step if !lowestIn
-                    else if step < 0
-                        if (value <= minV) or (value > maxV)
-                            value = maxV if value !=minV or !lowestIn
-                            value += step if !highestIn
+                    range = config.range
+                    value += range.step
+                    if range.step > 0       # step > 0?
+                        if (value < range.min) or (value >= range.max)
+                            if value != range.max or (value == range.max and !range.maxIn)
+                                value = range.min
+                                value += range.step if !range.minIn
+                    else if range.step < 0
+                        if (value <= range.min) or (value > range.max)
+                            if (value != range.min) or (value == range.min and !range.minIn)
+                                value = range.max
+                                value += range.step if !range.maxIn
                     value
+            getNextValueInList = (value, config) ->
+                # the range is list
+                if angular.isArray config.values
+                    values = config.values
+                else
+                    values = []
+                range = config.range
+                if angular.isUndefined config.index
+                    # try find the index by value
+                    config.index = _.indexOf(values, value)
+                config.index = getNextValueInLoop(config.index, config)
+                config.index = 0 if config.index < 0 or config.index >= values.length
+                values[config.index]
 
-            if angular.isDefined(opts.bind) #and angular.isDefined(opts.range)
+            #nextValueFn = getNextValueInLoop
+            #if (angular.isDefined options.values)
+            if angular.isArray options.values
+                nextValueFn = getNextValueInList
+            else if angular.isFunction options.values
+                nextValueFn = options.values
+            else
+                nextValueFn = getNextValueInLoop
+            if angular.isDefined(options.bind) #and angular.isDefined(opts.range)
                 #opts = angular.extend(opts, parseRange(opts.range))
 
                 element.addClass('i-clickable editable')
                 #element.bind('click', clickingCallback)
                 element.bind('click', (el)->
-                    value = $scope[opts.bind]
-                    value = applyRange(value, range)
+                    value = $scope[options.bind]
+                    value = nextValueFn(value, options)
 
                     # In clickingCallback, if you are changing any model/scope data,
                     # you'll want to call scope.$apply(), or put the contents of the
                     # method inside scope.$apply(function() { ...contents here...});
                     #$scope.$apply(opts.bind+"="+value)
-                    $scope[opts.bind] = value
+                    $scope[options.bind] = value
                     $scope.$apply()
                     return
                 )
