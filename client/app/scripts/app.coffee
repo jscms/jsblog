@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('jsBlogApp', ['iReactive'])
+angular.module('jsBlogApp', ['iReactive', 'ui.bootstrap'])
   .config ($routeProvider) ->
     $routeProvider
       .when '/',

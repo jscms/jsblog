@@ -42,7 +42,7 @@ angular.module('iReactive', [])
         # the default is a object
         range: {min: -Infinity, max: Infinity, step: 1, minIn: true, maxIn: true}
     })
-    .directive('iClickable', ['clickableConfig', '$timeout', (clickableConfig, $timeout) ->
+    .directive('iClickable', ['clickableConfig', '$timeout', '$tooltip', (clickableConfig, $timeout, $tooltip) ->
         'use strict'
 
         restrict: 'AE'
@@ -98,6 +98,8 @@ angular.module('iReactive', [])
                 #opts = angular.extend(opts, parseRange(opts.range))
 
                 element.addClass('i-clickable editable')
+                #element.attr('tooltip', "ddddd")
+                attrs.$set('tooltip', "@"+options.bind)
                 #element.bind('click', clickingCallback)
                 element.bind('click', (el)->
                     value = $scope[options.bind]
@@ -111,5 +113,5 @@ angular.module('iReactive', [])
                     $scope.$apply()
                     return
                 )
-            return
+            return $tooltip( 'tooltip', 'tooltip', 'mouseenter' )
     ])
