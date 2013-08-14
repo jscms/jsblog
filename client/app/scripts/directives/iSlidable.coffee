@@ -73,16 +73,16 @@ Returns nothing.
             @_reset()
 
 Window.DragManager = DragManager
+Window.dragManager = new DragManager()
 
 angular.module('iReactive.slidable', ['iReactive'])
     .directive('iSlidable', ['$iReactable', ($iReactable) ->
         aProcessEvent = (model, options, scope, element, attrs, nextValueFn) ->
-            this = options
             _reset: ->
                 now = new Date()
-                if now - @lastClick < 500
-                    model.assign(scope, @defaultValue)
-                @lastClick = now
+                if now - options.lastClick < 500
+                    model.assign(scope, options.defaultValue)
+                options.lastClick = now
                 return
 
             element.bind('click', (el)->
