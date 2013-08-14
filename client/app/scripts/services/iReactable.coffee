@@ -6,8 +6,19 @@ String::snake_case = (separator) ->
         (if pos then separator else '') + letter.toLowerCase()
     )
 
-angular.module('iReactive.reactable', [])
+angular.module('iReactive', [])
     .provider '$iReactable', [() ->
+        ###
+        *   arguments:
+        *       * aDirectiveName: the created new directive name
+        *       * aEvent: bind to the event, it can be a event string name, or a array, the item is:
+        *         * [{evName, evFn}, ...]
+        *           * eventName:
+        *           * eventFn: the event callback functions
+        *         * aprocessCallbackFunc(model, options, scope, element, attrs, NextValueFn)
+        *   return: the directive object
+        ###
+
         # AngularJS will instantiate a singleton by calling "new" on this function
         # The default options
         defaultOptions = 
@@ -95,6 +106,7 @@ angular.module('iReactive.reactable', [])
                         nextValueFn = options.values
                     else
                         nextValueFn = getNextValueInLoop
+
                     if angular.isDefined attrs.ngReadonly
                         scope.$watch(attrs.ngReadonly, (value) ->
                             options.readonly = !!value or angular.isUndefined(options.bind) # readonly is true
@@ -108,31 +120,38 @@ angular.module('iReactive.reactable', [])
                     if angular.isDefined(options.bind) #and angular.isDefined(opts.range)
                         #opts = angular.extend(opts, parseRange(opts.range))
 
+                        element.addClass('iReactable'.snake_case('-'))
                         element.addClass(aDirectiveName.snake_case('-'))
 
-                        attrs.$set('tooltip', options.hint) if options.hint
-                        attrs.$set('tooltip', "@"+options.bind)
+                        hint = "@"+ options.bind
+                        hint += ':' + options.hint if angular.isString(options.hint) and options.hint.length > 0
+                        attrs.$set('tooltip', hint)
                         #newEle = angular.copy(element)     # recursive error
                         #newEle = $compile(element)(scope) # recursive error
                         #element.replaceWith(newEle)
 
                         model = $parse(options.bind)
-                        element.bind(aEvent, (el)->
-                            if !options.readonly
-                                value = scope[options.bind]
-                                value = nextValueFn(value, options)
+                        options.defaultValue = model(scope)
+                        if angular.isFunction aEvent
+                            aEvent(model, options, scope, element, attrs, nextValueFn)
+                        else if angular.isString aEvent
+                            element.bind(aEvent, (el)->
+                                if !options.readonly
+                                    value = model(scope) #scope[options.bind]
+                                    value = nextValueFn(value, options)
 
-                                # In clickingCallback, if you are changing any model/scope data,
-                                # you'll want to call scope.$apply(), or put the contents of the
-                                # method inside scope.$apply(function() { ...contents here...});
-                                #scope.$apply(opts.bind+"="+value)
+                                    # In clickingCallback, if you are changing any model/scope data,
+                                    # you'll want to call scope.$apply(), or put the contents of the
+                                    # method inside scope.$apply(function() { ...contents here...});
+                                    #scope.$apply(opts.bind+"="+value)
 
-                                # the $parse can use string expression like: user.name 
-                                #scope[options.bind] = value
-                                model.assign(scope, value)
-                                scope.$apply()
-                            return
-                        )
+                                    # the $parse can use string expression like: user.name 
+                                    #scope[options.bind] = value
+                                    model.assign(scope, value)
+                                    scope.$apply()
+                                    return
+                            )
+                        return
                 {
                     restrict: 'AE'
                     compile: (tElement, tAttrs, transclude) ->
