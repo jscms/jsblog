@@ -120,10 +120,13 @@ angular.module('iReactive', [])
                             options.readonly = !!value or angular.isUndefined(options.bind) # readonly is true
                             if !options.readonly
                                 element.addClass('editable')
-                                attrs.$set('tooltip', options.hint)
+                                console.log(options.hint)
+                                hint = if options.hint?.length then options.hint else "@"+ options.bind
+                                attrs.$set('tooltip', hint)
                             else
                                 element.removeClass('editable')
-                                attrs.$set('tooltip', "@#{options.bind}")
+                                hint = if options.bind? then "@#{options.bind}" else ""
+                                attrs.$set('tooltip', "{{'#{hint}'}}")
                             return
                         )
 
@@ -156,20 +159,20 @@ angular.module('iReactive', [])
                                     return
                             )
                         #hint = "@"+ options.bind
-                        options.hint = "@"+ options.bind if !options.hint?.length
-                        attrs.$set('tooltip', options.hint)
+                        hint = if options.hint?.length then options.hint else "@"+ options.bind
+                        #attrs.$set('tooltip', hint)
                         return
                 {
                     restrict: 'AE'
                     compile: (tElement, tAttrs, transclude) ->
                         links = []
                         # set tooltip property and 'call' tooltip direcitve.
-                        #tAttrs.$set('tooltip', '')
                         directive = $injector.get('tooltip'+'Directive')[0]
                         link = directive.compile(tElement, tAttrs, transclude)
                         links.push(link)
                         links.push(iReactablelink)
                         return (scope, elm, attrs, ctrl) ->
+                            attrs.$set('tooltip', '') # It's too late, the attrs.$observe not work well
                             for link in links
                                 link(scope, elm, attrs, ctrl)
                 }
