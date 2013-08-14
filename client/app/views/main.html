@@ -1,6 +1,7 @@
 <div class="hero-unit">
-  <input ng-model="myvar"/>
-  <h2 ng-bind-template="hi {{myvar}}!" ng-init="myvar=1" i-clickable="{bind:'myvar', range:{min:1,max:4, step:1}}" range="{minIn:true, maxIn: false}">'Allo, 'Allo!</h2>
+  <label for='chkReadonly'>Check me to make text readonly: </label><input id="chkReadonly" type="checkbox" ng-model="checked" />
+  <input class="form-control" ng-model="myvar" ng-readonly="checked"/>
+  <h2 ng-bind-template="hi {{myvar}}!" ng-init="myvar=1" i-clickable="{bind:'myvar', readonly:true, range:{min:1,max:4, step:1}}" range="{minIn:true, maxIn: false}" ng-readonly="checked">'Allo, 'Allo!</h2>
   <p>You now have</p>
   <ul>
       <li class="glyphicon glyphicon-ok" ng-repeat="thing in awesomeThings">{{thing}}</li>

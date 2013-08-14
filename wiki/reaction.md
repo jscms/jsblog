@@ -16,7 +16,8 @@ Note: attr > value
 * i-clickable/i-slidable/i-playable
 
   * bind: variable
-  * readonly: true/false
+  * readonly: true/false (must be using in parameters) 
+    * u can use "ng-readonly" for using attribute.
   * values: 
     * null: a number ForLoop
     * array: In a List, [1,3,4,8]

@@ -32,8 +32,9 @@ body {
     @include transition(background-color 0.5s linear);
     background-color: transparent;
 
-    &.readonly {
+    &[readonly] {
         border-bottom-color: $read_only_element_color;
+        cursor: not-allowed;
     }
 
     &.editable {
