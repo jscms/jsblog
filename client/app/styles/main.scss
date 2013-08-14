@@ -22,13 +22,21 @@ body {
     background: #fafafa;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #333;
+    &.dragging-x {
+        cursor: col-resize;
+    }
 }
 
+.i-clickable {
+    cursor: pointer;
+}
+.i-slidable {
+    cursor: col-resize;
+}
 .i-reactable {
     display: inline;
     border-bottom: 1px dotted $element_color;
     position: relative;
-    cursor: pointer;
     @include transition(background-color 0.5s linear);
     background-color: transparent;
 

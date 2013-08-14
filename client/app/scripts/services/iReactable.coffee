@@ -32,7 +32,7 @@ angular.module('iReactive', [])
             hint: undefined,
             # the range may be a object, a list or a func
             # the default is a object
-            range: {min: -Infinity, max: Infinity, step: 1, minIn: true, maxIn: true}
+            range: {min: -Infinity, max: Infinity, step: 1, minIn: true, maxIn: true, mulStep: 1}
 
         # The options specified to the provider globally.
         globalOptions = {}
@@ -50,23 +50,31 @@ angular.module('iReactive', [])
             angular.extend( globalOptions, value );
             return
 
-        getNextValueInLoop = (value, config) ->
+        getNextValueInLoop = (value, config, looped) ->
             if angular.isNumber value
                 range = config.range
-                value += range.step
-                if range.step > 0       # step > 0?
-                    if (value < range.min) or (value >= range.max)
-                        if value != range.max or (value == range.max and !range.maxIn)
-                            value = range.min
-                            value += range.step if !range.minIn
-                else if range.step < 0
-                    if (value <= range.min) or (value > range.max)
-                        if (value != range.min) or (value == range.min and !range.minIn)
-                            value = range.max
-                            value += range.step if !range.maxIn
+                step = range.step * range.mulStep
+                if !looped
+                    if step > 0 
+                        if value >= range.max
+                            return range.max
+                    else if value <= range.min
+                        return range.min
+                value += step
+                if looped
+                    if step > 0       # step > 0?
+                        if (value < range.min) or (value >= range.max)
+                            if (value != range.max) or (value == range.max and !range.maxIn)
+                                value = range.min
+                                value += range.step if !range.minIn
+                    else if step < 0
+                        if (value <= range.min) or (value > range.max)
+                            if (value != range.min) or (value == range.min and !range.minIn)
+                                value = range.max
+                                value += range.step if !range.maxIn
                 value
 
-        getNextValueInList = (value, config) ->
+        getNextValueInList = (value, config, looped) ->
             # the range is list
             if angular.isArray config.values
                 values = config.values
@@ -76,7 +84,7 @@ angular.module('iReactive', [])
             if angular.isUndefined config.index
                 # try find the index by value
                 config.index = _.indexOf(values, value)
-            config.index = getNextValueInLoop(config.index, config)
+            config.index = getNextValueInLoop(config.index, config, looped)
             config.index = 0 if config.index < 0 or config.index >= values.length
             values[config.index]
 
@@ -112,8 +120,10 @@ angular.module('iReactive', [])
                             options.readonly = !!value or angular.isUndefined(options.bind) # readonly is true
                             if !options.readonly
                                 element.addClass('editable')
+                                attrs.$set('tooltip', options.hint)
                             else
                                 element.removeClass('editable')
+                                attrs.$set('tooltip', "@#{options.bind}")
                             return
                         )
 
@@ -123,12 +133,6 @@ angular.module('iReactive', [])
                         element.addClass('iReactable'.snake_case('-'))
                         element.addClass(aDirectiveName.snake_case('-'))
 
-                        hint = "@"+ options.bind
-                        hint += ':' + options.hint if angular.isString(options.hint) and options.hint.length > 0
-                        attrs.$set('tooltip', hint)
-                        #newEle = angular.copy(element)     # recursive error
-                        #newEle = $compile(element)(scope) # recursive error
-                        #element.replaceWith(newEle)
 
                         model = $parse(options.bind)
                         options.defaultValue = model(scope)
@@ -138,7 +142,7 @@ angular.module('iReactive', [])
                             element.bind(aEvent, (el)->
                                 if !options.readonly
                                     value = model(scope) #scope[options.bind]
-                                    value = nextValueFn(value, options)
+                                    value = nextValueFn(value, options, true)
 
                                     # In clickingCallback, if you are changing any model/scope data,
                                     # you'll want to call scope.$apply(), or put the contents of the
@@ -151,6 +155,9 @@ angular.module('iReactive', [])
                                     scope.$apply()
                                     return
                             )
+                        #hint = "@"+ options.bind
+                        options.hint = "@"+ options.bind if !options.hint?.length
+                        attrs.$set('tooltip', options.hint)
                         return
                 {
                     restrict: 'AE'

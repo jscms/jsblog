@@ -8,52 +8,52 @@ class DragManager
         @_$body = $('body')
 
     ###
-Private: reset the drag manager and related document styles (cursor).
+    Private: reset the drag manager and related document styles (cursor).
 
-Returns nothing.
-###
+    Returns nothing.
+    ###
     _reset: ->
-        @is_dragging = false
+        @isDragging = false
         if @_direction?
             @_$body.removeClass("dragging-#{ @_direction }")
-        @_dragging_target = null
-        @_drag_start_x = null
-        @_drag_start_y = null
+        @_draggingTarget = null
+        @_dragStartX = null
+        @_dragStartY = null
         @_direction = null
         return
 
     ###
-Private: prepare the mouse position information for the handlers.
+    Private: prepare the mouse position information for the handlers.
 
-cur_x - the integer current x position of the cursor
-cur_y - the integer current y position of the cursor
+    cur_x - the integer current x position of the cursor
+    cur_y - the integer current y position of the cursor
 
-Returns an object with the initial coordinates, and the change in position.
-###
+    Returns an object with the initial coordinates, and the change in position.
+    ###
     _assembleUI: (cur_x, cur_y) ->
         return {
-            x_start : @_drag_start_x
-            y_start : @_drag_start_y
-            x_delta : cur_x - @_drag_start_x
-            y_delta : cur_y - @_drag_start_y
+            x_start : @_dragStartX
+            y_start : @_dragStartY
+            x_delta : cur_x - @_dragStartX
+            y_delta : cur_y - @_dragStartY
         }
 
     ###
-Public: initiate a drag operation for a given view.
+    Public: initiate a drag operation for a given view.
 
-e - the jQuery.Event from the initial mousedown event
-view - the BaseElementView of the element starting the drag
-direction - the String direction of the drag: 'x', 'y', or 'both'
+    e - the jQuery.Event from the initial mousedown event
+    view - the BaseElementView of the element starting the drag
+    direction - the String direction of the drag: 'x', 'y', or 'both'
 
-Returns nothing.
-###
+    Returns nothing.
+    ###
     start: (e, view, direction) ->
-        @is_dragging = true
+        @isDragging = true
         { pageX, pageY } = e
         @_direction = direction
-        @_drag_start_x = pageX
-        @_drag_start_y = pageY
-        @_dragging_target = view
+        @_dragStartX = pageX
+        @_dragStartY = pageY
+        @_draggingTarget = view
         @_$window.on('mousemove', @_drag)
         @_$window.on('mouseup', @_stop)
         @_$body.addClass("dragging-#{ @_direction }")
@@ -61,45 +61,57 @@ Returns nothing.
     _drag: (e) =>
         { pageX, pageY } = e
         ui = @_assembleUI(pageX, pageY)
-        @_dragging_target.onDrag?(ui)
+        @_draggingTarget.onDrag?(ui)
 
     _stop: (e) =>
         @_$window.off('mousemove', @_drag)
         @_$window.off('mouseup', @_stop)
-        if @_dragging_target?
+        if @_draggingTarget?
             { pageX, pageY } = e
             ui = @_assembleUI(pageX, pageY)
-            @_dragging_target.stopDragging?(ui)
+            @_draggingTarget.stopDragging?(ui)
             @_reset()
 
 Window.DragManager = DragManager
-Window.dragManager = new DragManager()
+Window.dragManager = new Window.DragManager()
 
 angular.module('iReactive.slidable', ['iReactive'])
     .directive('iSlidable', ['$iReactable', ($iReactable) ->
         aProcessEvent = (model, options, scope, element, attrs, nextValueFn) ->
-            _reset: ->
+            options.hint = "Drag it to adjust @#{options.bind}'s value"
+            _reset = ->
                 now = new Date()
                 if now - options.lastClick < 500
                     model.assign(scope, options.defaultValue)
                 options.lastClick = now
                 return
 
-            element.bind('click', (el)->
+            _onDrag = ({ x_start, y_start, x_delta, y_delta }) ->
+                options.range.mulStep = Math.floor(x_delta / 5)
+                value = model(scope) #scope[options.bind]
+                value = nextValueFn(value, options, false)
+                model.assign(scope, value)
+                scope.$apply()
+                return
+
+            _stopDragging = ->
+                element.removeClass('active')
+
+            _startDragging = (e) ->
                 if !options.readonly
-                    value = scope[options.bind]
-                    value = nextValueFn(value, options)
+                    this.onDrag = _onDrag
+                    this.stopDragging = _stopDragging
+                    Window.dragManager.start(e, this, 'x')
+                    options.defaultValue = model(scope)
+                    element.addClass('active')
+                    e.preventDefault()
+                return
 
-                    # In clickingCallback, if you are changing any model/scope data,
-                    # you'll want to call scope.$apply(), or put the contents of the
-                    # method inside scope.$apply(function() { ...contents here...});
-                    #scope.$apply(opts.bind+"="+value)
-
-                    # the $parse can use string expression like: user.name 
-                    #scope[options.bind] = value
-                    model.assign(scope, value)
-                    scope.$apply()
+            element.bind('click', (e)->
+                if !options.readonly
+                    _reset()
                 return
             )
+            element.bind('mousedown', _startDragging)
         return $iReactable('iSlidable', aProcessEvent)
     ])

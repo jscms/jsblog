@@ -23,7 +23,7 @@ Note: attr > value
     * array: In a List, [1,3,4,8]
     * function
       * In a custom rangeFunc:
-          rangeFn = (value, config)->
+          rangeFn = (value, config, looped)->
             # get the new value
             value+1
   * //range: "10..100 by 2" put it into markdown parse
