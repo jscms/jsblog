@@ -29,6 +29,7 @@ angular.module('iReactive', [])
             #   * array: means it's a list, the item is picked from it. the index is the current item.
             #   * function: means get next value from it.
             values: null,
+            hintOn: true,
             hint: undefined,
             # the range may be a object, a list or a func
             # the default is a object
@@ -88,6 +89,9 @@ angular.module('iReactive', [])
             config.index = 0 if config.index < 0 or config.index >= values.length
             values[config.index]
 
+        isHintEnabled = (options) ->
+            !!options.hintOn
+
         this.$get = [ '$injector', '$parse', '$timeout', ($injector, $parse, $timeout) ->
             (aDirectiveName, aEvent) ->
                 iReactablelink = (scope, element, attrs) ->
@@ -120,17 +124,19 @@ angular.module('iReactive', [])
                             hint = ''
                             if !options.readonly
                                 element.addClass('editable')
-                                element.removeClass('hint--error')
-                                element.addClass('hint--info')
-                                hint = if options.hint?.length then options.hint else "@"+ options.bind
+                                if isHintEnabled options
+                                    element.removeClass('hint--error')
+                                    element.addClass('hint--info')
+                                    hint = if options.hint?.length then options.hint else "@"+ options.bind
                                 #attrs.$set('tooltip', hint)
                             else
                                 element.removeClass('editable')
-                                element.removeClass('hint--info')
-                                element.addClass('hint--error')
-                                hint = if options.bind? then "@#{options.bind}" else ""
+                                if isHintEnabled options
+                                    element.removeClass('hint--info')
+                                    element.addClass('hint--error')
+                                    hint = if options.bind? then "@#{options.bind}" else ""
                                 #attrs.$set('tooltip', "{{'#{hint}'}}")
-                            attrs.$set('data-hint', hint)
+                            attrs.$set('data-hint', hint) if hint != ''
                             return
                         )
 
@@ -139,9 +145,6 @@ angular.module('iReactive', [])
 
                         element.addClass('iReactable'.snake_case('-'))
                         element.addClass(aDirectiveName.snake_case('-'))
-                        element.addClass('hint--info')
-                        element.addClass('hint--top')
-
 
                         model = $parse(options.bind)
                         options.defaultValue = model(scope)
@@ -165,8 +168,11 @@ angular.module('iReactive', [])
                                     return
                             )
                         #hint = "@"+ options.bind
-                        hint = if options.hint?.length then options.hint else "@"+ options.bind
-                        attrs.$set('data-hint', hint)
+                        if isHintEnabled options
+                            element.addClass('hint--info')
+                            element.addClass('hint--top')
+                            hint = if options.hint?.length then options.hint else "@"+ options.bind
+                            attrs.$set('data-hint', hint)
                         return
                 {
                     restrict: 'AE'
