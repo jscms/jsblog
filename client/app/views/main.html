@@ -4,7 +4,7 @@
   <h2 ng-bind-template="hi {{myvar}}!" ng-init="myvar=-1" i-slidable="{bind:'myvar', readonly:true, range:{min:1,max:50, step:1}}" range="{minIn:true, maxIn: false}" ng-readonly="checked">'Allo, 'Allo!</h2>
 
   <span ng-bind-template="another {{myvar}}!" i-clickable="{bind:'myvar', range:{min:1,max:50, step:1}}" ng-readonly="checked"></span>
-  <span tooltip="" ng-bind-template="Third {{myvar}}!" i-clickable="{bind:'myvar', range:{min:1,max:50, step:1}}" ng-readonly="!checked"></span>
+  <span ng-bind-template="Third {{myvar}}!" i-clickable="{bind:'myvar', range:{min:1,max:50, step:1}}" ng-readonly="!checked"></span>
   <!--p>You now have</p>
   <ul>
       <li class="glyphicon glyphicon-ok" ng-repeat="thing in awesomeThings">{{thing}}</li>

@@ -90,9 +90,8 @@ angular.module('iReactive', [])
 
         this.$get = [ '$injector', '$parse', '$timeout', ($injector, $parse, $timeout) ->
             (aDirectiveName, aEvent) ->
-                options = angular.extend( {}, defaultOptions, globalOptions )
                 iReactablelink = (scope, element, attrs) ->
-
+                    options = angular.extend( {}, defaultOptions, globalOptions )
                     options = angular.extend(options, scope.$eval(attrs[aDirectiveName]))
                     options.bind = attrs.bind if attrs.bind
                     options.range = angular.extend(defaultOptions.range, options.range, scope.$eval(attrs.range))
@@ -118,15 +117,20 @@ angular.module('iReactive', [])
                     if angular.isDefined attrs.ngReadonly
                         scope.$watch(attrs.ngReadonly, (value) ->
                             options.readonly = !!value or angular.isUndefined(options.bind) # readonly is true
+                            hint = ''
                             if !options.readonly
                                 element.addClass('editable')
-                                console.log(options.hint)
+                                element.removeClass('hint--error')
+                                element.addClass('hint--info')
                                 hint = if options.hint?.length then options.hint else "@"+ options.bind
-                                attrs.$set('tooltip', hint)
+                                #attrs.$set('tooltip', hint)
                             else
                                 element.removeClass('editable')
+                                element.removeClass('hint--info')
+                                element.addClass('hint--error')
                                 hint = if options.bind? then "@#{options.bind}" else ""
-                                attrs.$set('tooltip', "{{'#{hint}'}}")
+                                #attrs.$set('tooltip', "{{'#{hint}'}}")
+                            attrs.$set('data-hint', hint)
                             return
                         )
 
@@ -135,6 +139,8 @@ angular.module('iReactive', [])
 
                         element.addClass('iReactable'.snake_case('-'))
                         element.addClass(aDirectiveName.snake_case('-'))
+                        element.addClass('hint--info')
+                        element.addClass('hint--top')
 
 
                         model = $parse(options.bind)
@@ -160,19 +166,19 @@ angular.module('iReactive', [])
                             )
                         #hint = "@"+ options.bind
                         hint = if options.hint?.length then options.hint else "@"+ options.bind
-                        #attrs.$set('tooltip', hint)
+                        attrs.$set('data-hint', hint)
                         return
                 {
                     restrict: 'AE'
                     compile: (tElement, tAttrs, transclude) ->
                         links = []
                         # set tooltip property and 'call' tooltip direcitve.
-                        directive = $injector.get('tooltip'+'Directive')[0]
-                        link = directive.compile(tElement, tAttrs, transclude)
-                        links.push(link)
+                        #directive = $injector.get('tooltip'+'Directive')[0]
+                        #link = directive.compile(tElement, tAttrs, transclude)
+                        #links.push(link)
                         links.push(iReactablelink)
                         return (scope, elm, attrs, ctrl) ->
-                            attrs.$set('tooltip', '') # It's too late, the attrs.$observe not work well
+                            #attrs.$set('tooltip', '') # It's too late, the attrs.$observe not work well
                             for link in links
                                 link(scope, elm, attrs, ctrl)
                 }
