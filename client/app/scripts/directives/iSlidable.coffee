@@ -77,21 +77,26 @@ angular.DragManager = DragManager
 angular.module('iReactive.slidable', ['iReactive'])
     .directive('iSlidable', ['$iReactable', ($iReactable) ->
         dragManager = new DragManager()
-        aProcessEvent = (model, options, scope, element, attrs, nextValueFn) ->
-            options.hint = "Drag it to adjust @#{options.bind}'s value"
+        aProcessEvent = (ngModelCtrl, options, scope, element, attrs, nextValueFn) ->
+            options.hint = "Drag it to adjust @#{attrs.ngModel}'s value"
             _reset = ->
                 now = new Date()
                 if now - options.lastClick < 500
-                    model.assign(scope, options.defaultValue)
+                    scope.$apply(()->
+                        ngModelCtrl.$setViewValue(options.defaultValue);
+                        ngModelCtrl.$render();
+                    )
+                    #model.assign(scope, options.defaultValue)
                 options.lastClick = now
                 return
 
             _onDrag = ({ x_start, y_start, x_delta, y_delta }) ->
                 options.range.mulStep = Math.floor(x_delta / 5)
-                value = model(scope) #scope[options.bind]
-                value = nextValueFn(value, options, false)
-                model.assign(scope, value)
-                scope.$apply()
+                #value = model(scope) #scope[options.bind]
+                value = nextValueFn(ngModelCtrl.$modelValue, options, false)
+                scope.$apply( ()->
+                    ngModelCtrl.$setViewValue(value)
+                )
                 return
 
             _stopDragging = ->
@@ -102,7 +107,7 @@ angular.module('iReactive.slidable', ['iReactive'])
                     this.onDrag = _onDrag
                     this.stopDragging = _stopDragging
                     dragManager.start(e, this, 'x')
-                    options.defaultValue = model(scope)
+                    options.defaultValue = ngModelCtrl.$modelValue
                     element.addClass('active')
                     e.preventDefault()
                 return

@@ -12,7 +12,7 @@ describe 'Directive: iClickable', () ->
   element = {}
 
   it 'should make element clickable and bind variable', inject ($rootScope, $compile) ->
-    element = angular.element  '<i-clickable bind="myvar">{{myvar}}</i-clickable>'
+    element = angular.element  '<i-clickable ng-model="myvar">{{myvar}}</i-clickable>'
     $scope.myvar = 1
     element = $compile(element) $scope
     $scope.$digest()

@@ -94,23 +94,15 @@ angular.module('iReactive', [])
 
         this.$get = [ '$injector', '$parse', '$timeout', ($injector, $parse, $timeout) ->
             (aDirectiveName, aEvent) ->
-                iReactablelink = (scope, element, attrs) ->
+                iReactablelink = (scope, element, attrs, ngModelCtrl) ->
+                    if(!ngModelCtrl) then return # do nothing if no ng-model
                     options = angular.extend( {}, defaultOptions, globalOptions )
                     options = angular.extend(options, scope.$eval(attrs[aDirectiveName]))
-                    options.bind = attrs.bind if attrs.bind
+                    #options.bind = attrs.bind if attrs.bind
                     options.range = angular.extend(defaultOptions.range, options.range, scope.$eval(attrs.range))
                     options.values = scope.$eval(attrs.values) if attrs.values
                     options.hint = scope.$eval(attrs.hint) if attrs.hint
-                    if !options.readonly
-                        element.addClass('editable')
-                    else
-                        attrs.$set("readonly", "readonly")
-                    #if range.length < clickableConfig.range.length
-                    #   Array::push.apply(range, clickableConfig.range[range.length..])
 
-
-                    #nextValueFn = getNextValueInLoop
-                    #if (angular.isDefined options.values)
                     if angular.isArray options.values
                         nextValueFn = getNextValueInList
                     else if angular.isFunction options.values
@@ -118,64 +110,76 @@ angular.module('iReactive', [])
                     else
                         nextValueFn = getNextValueInLoop
 
-                    if angular.isDefined attrs.ngReadonly
+                    # model -> UI
+                    ngModelCtrl.$render =  () ->
+                        hint = ''
+                        if !options.readonly
+                            element.addClass('editable')
+                            if isHintEnabled options
+                                element.removeClass('hint--error')
+                                element.addClass('hint--info')
+                                hint = if options.hint?.length then options.hint else "@"+ attrs.ngModel
+                            #attrs.$set('tooltip', hint)
+                        else
+                            element.removeClass('editable')
+                            if isHintEnabled options
+                                element.removeClass('hint--info')
+                                element.addClass('hint--error')
+                                hint = "@#{attrs.ngModel}" #if options.bind? then "@#{options.bind}" else ""
+                            #attrs.$set('tooltip', "{{'#{hint}'}}")
+                        attrs.$set('data-hint', hint) if hint != ''
+                        return
+
+                    if angular.isDefined attrs.ngReadonly  # watch the readonly variable changing.
                         scope.$watch(attrs.ngReadonly, (value) ->
-                            options.readonly = !!value or angular.isUndefined(options.bind) # readonly is true
-                            hint = ''
-                            if !options.readonly
-                                element.addClass('editable')
-                                if isHintEnabled options
-                                    element.removeClass('hint--error')
-                                    element.addClass('hint--info')
-                                    hint = if options.hint?.length then options.hint else "@"+ options.bind
-                                #attrs.$set('tooltip', hint)
-                            else
-                                element.removeClass('editable')
-                                if isHintEnabled options
-                                    element.removeClass('hint--info')
-                                    element.addClass('hint--error')
-                                    hint = if options.bind? then "@#{options.bind}" else ""
-                                #attrs.$set('tooltip', "{{'#{hint}'}}")
-                            attrs.$set('data-hint', hint) if hint != ''
+                            options.readonly = !!value  # readonly is true
+                            ngModelCtrl.$render()
                             return
                         )
 
-                    if angular.isDefined(options.bind) #and angular.isDefined(opts.range)
-                        #opts = angular.extend(opts, parseRange(opts.range))
 
-                        element.addClass('iReactable'.snake_case('-'))
-                        element.addClass(aDirectiveName.snake_case('-'))
+                    element.addClass('iReactable'.snake_case('-'))
+                    element.addClass(aDirectiveName.snake_case('-'))
 
-                        model = $parse(options.bind)
-                        options.defaultValue = model(scope)
-                        if angular.isFunction aEvent
-                            aEvent(model, options, scope, element, attrs, nextValueFn)
-                        else if angular.isString aEvent
-                            element.bind(aEvent, (el)->
-                                if !options.readonly
-                                    value = model(scope) #scope[options.bind]
-                                    value = nextValueFn(value, options, true)
+                    #model = $parse(options.bind)
+                    options.defaultValue = ngModelCtrl.$modelValue #model(scope)
+                    if angular.isFunction aEvent
+                        aEvent(ngModelCtrl, options, scope, element, attrs, nextValueFn)
+                    else if angular.isString aEvent
+                        element.bind(aEvent, (el)->
+                            if !options.readonly
+                                #value = model(scope) #scope[options.bind]
+                                value = nextValueFn(ngModelCtrl.$modelValue, options, true)
 
-                                    # In clickingCallback, if you are changing any model/scope data,
-                                    # you'll want to call scope.$apply(), or put the contents of the
-                                    # method inside scope.$apply(function() { ...contents here...});
-                                    #scope.$apply(opts.bind+"="+value)
+                                # In clickingCallback, if you are changing any model/scope data,
+                                # you'll want to call scope.$apply(), or put the contents of the
+                                # method inside scope.$apply(function() { ...contents here...});
+                                #scope.$apply(opts.bind+"="+value)
 
-                                    # the $parse can use string expression like: user.name 
-                                    #scope[options.bind] = value
-                                    model.assign(scope, value)
-                                    scope.$apply()
-                                    return
-                            )
-                        #hint = "@"+ options.bind
-                        if isHintEnabled options
-                            element.addClass('hint--info')
-                            element.addClass('hint--top')
-                            hint = if options.hint?.length then options.hint else "@"+ options.bind
-                            attrs.$set('data-hint', hint)
-                        return
+                                # the $parse can use string expression like: user.name 
+                                #scope[options.bind] = value
+                                #model.assign(scope, value)
+                                scope.$apply(()->
+                                    ngModelCtrl.$setViewValue(value);
+                                    #ngModelCtrl.$render();
+                                )
+                            return
+                        )
+                    #hint = "@"+ options.bind
+                    ngModelCtrl.$render()
+                    if isHintEnabled options
+                        element.addClass('hint--top')
+                    ###
+                    if isHintEnabled options
+                        element.addClass('hint--info')
+                        element.addClass('hint--top')
+                        hint = if options.hint?.length then options.hint else "@#{attrs.ngModel}" #+ options.bind
+                        attrs.$set('data-hint', hint)
+                    ###
+                    return
                 {
                     restrict: 'AE'
+                    require:'ngModel'
                     compile: (tElement, tAttrs, transclude) ->
                         links = []
                         # set tooltip property and 'call' tooltip direcitve.
