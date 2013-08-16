@@ -6,6 +6,50 @@ String::snake_case = (separator) ->
         (if pos then separator else '') + letter.toLowerCase()
     )
 
+# the internal Hint class
+class Hint
+    constructor: (@options, @element, @attrs)->
+    enabled: () ->
+        !!@options.hintOn
+    _on: () ->
+        @element.addClass('hint--top')
+        if !@options.readonly
+            @element.removeClass('hint--error')
+            @element.addClass('hint--info')
+        else
+            @element.removeClass('hint--info')
+            @element.addClass('hint--error')
+    _off: () ->
+        @element.removeClass('hint--info')
+        @element.removeClass('hint--error')
+        @element.removeClass('hint--top')
+        @attrs.$set('data-hint', '')
+    init: () ->
+        #if @enabled()
+        ###
+        if isHintEnabled options
+            element.addClass('hint--info')
+            element.addClass('hint--top')
+            hint = if options.hint?.length then options.hint else "@#{attrs.ngModel}" #+ options.bind
+            attrs.$set('data-hint', hint)
+        ###
+    apply: () ->
+        if @enabled()
+            hint = ''
+            if !@options.readonly
+                hint = if @options.hint?.length then @options.hint else "@"+ @attrs.ngModel
+                #attrs.$set('tooltip', hint)
+            else
+                hint = "@#{@attrs.ngModel}" #if options.bind? then "@#{options.bind}" else ""
+                #attrs.$set('tooltip', "{{'#{hint}'}}")
+            if hint != ''
+                @_on()
+                @attrs.$set('data-hint', hint)
+            else
+                @_off()
+        else
+            @_off()
+
 angular.module('iReactive', [])
     .provider '$iReactable', [() ->
         ###
@@ -16,7 +60,7 @@ angular.module('iReactive', [])
         *           * eventName:
         *           * eventFn: the event callback functions
         *         * aprocessCallbackFunc(model, options, scope, element, attrs, NextValueFn)
-        *   return: the directive object
+        *   return: the directive definition object
         ###
 
         # AngularJS will instantiate a singleton by calling "new" on this function
@@ -29,7 +73,9 @@ angular.module('iReactive', [])
             #   * array: means it's a list, the item is picked from it. the index is the current item.
             #   * function: means get next value from it.
             values: null,
+            # enable/disable hint
             hintOn: true,
+            # the hint text
             hint: undefined,
             # the range may be a object, a list or a func
             # the default is a object
@@ -89,17 +135,15 @@ angular.module('iReactive', [])
             config.index = 0 if config.index < 0 or config.index >= values.length
             values[config.index]
 
-        isHintEnabled = (options) ->
-            !!options.hintOn
 
         this.$get = [ '$injector', '$parse', '$timeout', ($injector, $parse, $timeout) ->
             (aDirectiveName, aEvent) ->
                 iReactablelink = (scope, element, attrs, ngModelCtrl) ->
                     if(!ngModelCtrl) then return # do nothing if no ng-model
-                    options = angular.extend( {}, defaultOptions, globalOptions )
+                    options = angular.extend({}, defaultOptions, globalOptions )
                     options = angular.extend(options, scope.$eval(attrs[aDirectiveName]))
                     #options.bind = attrs.bind if attrs.bind
-                    options.range = angular.extend(defaultOptions.range, options.range, scope.$eval(attrs.range))
+                    options.range = angular.extend({}, defaultOptions.range, options.range, scope.$eval(attrs.range))
                     options.values = scope.$eval(attrs.values) if attrs.values
                     options.hint = scope.$eval(attrs.hint) if attrs.hint
 
@@ -109,25 +153,15 @@ angular.module('iReactive', [])
                         nextValueFn = options.values
                     else
                         nextValueFn = getNextValueInLoop
+                    vHint = new Hint(options, element, attrs)
 
                     # model -> UI
                     ngModelCtrl.$render =  () ->
-                        hint = ''
                         if !options.readonly
                             element.addClass('editable')
-                            if isHintEnabled options
-                                element.removeClass('hint--error')
-                                element.addClass('hint--info')
-                                hint = if options.hint?.length then options.hint else "@"+ attrs.ngModel
-                            #attrs.$set('tooltip', hint)
                         else
                             element.removeClass('editable')
-                            if isHintEnabled options
-                                element.removeClass('hint--info')
-                                element.addClass('hint--error')
-                                hint = "@#{attrs.ngModel}" #if options.bind? then "@#{options.bind}" else ""
-                            #attrs.$set('tooltip', "{{'#{hint}'}}")
-                        attrs.$set('data-hint', hint) if hint != ''
+                        vHint.apply attrs
                         return
 
                     if angular.isDefined attrs.ngReadonly  # watch the readonly variable changing.
@@ -167,15 +201,7 @@ angular.module('iReactive', [])
                         )
                     #hint = "@"+ options.bind
                     ngModelCtrl.$render()
-                    if isHintEnabled options
-                        element.addClass('hint--top')
-                    ###
-                    if isHintEnabled options
-                        element.addClass('hint--info')
-                        element.addClass('hint--top')
-                        hint = if options.hint?.length then options.hint else "@#{attrs.ngModel}" #+ options.bind
-                        attrs.$set('data-hint', hint)
-                    ###
+                    #vHint.init
                     return
                 {
                     restrict: 'AE'
