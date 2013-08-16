@@ -6,11 +6,34 @@ String::snake_case = (separator) ->
         (if pos then separator else '') + letter.toLowerCase()
     )
 
-# the internal Hint class
-class Hint
+
+# the internal abstract Hint class
+class CustomHint
     constructor: (@options, @element, @attrs)->
     enabled: () ->
         !!@options.hintOn
+    apply: () ->
+        if @enabled()
+            hint = ''
+            if !@options.readonly
+                hint = if @options.hint?.length then @options.hint else "@"+ @attrs.ngModel
+                #attrs.$set('tooltip', hint)
+            else
+                hint = "@#{@attrs.ngModel}" #if options.bind? then "@#{options.bind}" else ""
+                #attrs.$set('tooltip', "{{'#{hint}'}}")
+            if hint != ''
+                @_on()
+                @_set(hint)
+            else
+                @_off()
+        else
+            @_off()
+
+# the internal Hint class for bootstrap tooltip
+# class HintTooltip
+
+# the internal Hint class for hint.css
+class HintCss extends CustomHint
     _on: () ->
         @element.addClass('hint--top')
         if !@options.readonly
@@ -24,6 +47,8 @@ class Hint
         @element.removeClass('hint--error')
         @element.removeClass('hint--top')
         @attrs.$set('data-hint', '')
+    _set: (text) ->
+        @attrs.$set('data-hint', text)
     init: () ->
         #if @enabled()
         ###
@@ -33,22 +58,8 @@ class Hint
             hint = if options.hint?.length then options.hint else "@#{attrs.ngModel}" #+ options.bind
             attrs.$set('data-hint', hint)
         ###
-    apply: () ->
-        if @enabled()
-            hint = ''
-            if !@options.readonly
-                hint = if @options.hint?.length then @options.hint else "@"+ @attrs.ngModel
-                #attrs.$set('tooltip', hint)
-            else
-                hint = "@#{@attrs.ngModel}" #if options.bind? then "@#{options.bind}" else ""
-                #attrs.$set('tooltip', "{{'#{hint}'}}")
-            if hint != ''
-                @_on()
-                @attrs.$set('data-hint', hint)
-            else
-                @_off()
-        else
-            @_off()
+
+Hint = HintCss
 
 angular.module('iReactive', [])
     .provider '$iReactable', [() ->
