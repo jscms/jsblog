@@ -72,7 +72,7 @@ class DragManager
             @_draggingTarget.stopDragging?(ui)
             @_reset()
 
-angular.DragManager = DragManager
+#angular.DragManager = DragManager
 
 angular.module('iReactive.slidable', ['iReactive'])
     .directive('iSlidable', ['$iReactable', ($iReactable) ->
