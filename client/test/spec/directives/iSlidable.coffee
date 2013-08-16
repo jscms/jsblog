@@ -5,7 +5,9 @@ describe 'Directive: iSlidable', () ->
 
   element = {}
 
-  it 'should make hidden element visible', inject ($rootScope, $compile) ->
-    element = angular.element '<i-slidable></i-slidable>'
+  it 'should make slidable element to bind', inject ($rootScope, $compile) ->
+    element = angular.element '<i-slidable bind="myvar">{{myvar}}</i-slidable>'
+    $rootScope.myvar = 1
     element = $compile(element) $rootScope
-    expect(element.text()).toBe 'this is the iSlidable directive'
+    $rootScope.$digest()
+    expect(element.text()).toBe '1'

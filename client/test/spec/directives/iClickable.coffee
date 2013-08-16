@@ -1,11 +1,22 @@
 'use strict'
 
 describe 'Directive: iClickable', () ->
-  beforeEach module 'jsBlogApp'
+  $scope = {}
+  $compile = null
+
+  beforeEach module 'iReactive.clickable'
+  beforeEach inject (_$rootScope_, _$compile_) ->
+    $scope = _$rootScope_
+    $compile = _$compile_
 
   element = {}
 
-  it 'should make hidden element visible', inject ($rootScope, $compile) ->
-    element = angular.element '<i-clickable></i-clickable>'
-    element = $compile(element) $rootScope
-    expect(element.text()).toBe 'this is the iClickable directive'
+  it 'should make element clickable and bind variable', inject ($rootScope, $compile) ->
+    element = angular.element  '<i-clickable bind="myvar">{{myvar}}</i-clickable>'
+    $scope.myvar = 1
+    element = $compile(element) $scope
+    $scope.$digest()
+    expect(element.text()).toBe '1'
+    element.click()
+    expect(element.text()).toBe '2'
+
