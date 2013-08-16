@@ -72,11 +72,11 @@ class DragManager
             @_draggingTarget.stopDragging?(ui)
             @_reset()
 
-Window.DragManager = DragManager
-Window.dragManager = new Window.DragManager()
+angular.DragManager = DragManager
 
 angular.module('iReactive.slidable', ['iReactive'])
     .directive('iSlidable', ['$iReactable', ($iReactable) ->
+        dragManager = new DragManager()
         aProcessEvent = (model, options, scope, element, attrs, nextValueFn) ->
             options.hint = "Drag it to adjust @#{options.bind}'s value"
             _reset = ->
@@ -101,7 +101,7 @@ angular.module('iReactive.slidable', ['iReactive'])
                 if !options.readonly
                     this.onDrag = _onDrag
                     this.stopDragging = _stopDragging
-                    Window.dragManager.start(e, this, 'x')
+                    dragManager.start(e, this, 'x')
                     options.defaultValue = model(scope)
                     element.addClass('active')
                     e.preventDefault()
