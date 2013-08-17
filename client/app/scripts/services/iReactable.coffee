@@ -61,7 +61,7 @@ class HintCss extends CustomHint
 
 Hint = HintCss
 
-flashChanged = (element) ->
+flashAnimate = (element) ->
     ###
     jQuery(element).css({
         position:'relative',
@@ -72,11 +72,11 @@ flashChanged = (element) ->
     if !$(element).is(':animated')
         $(element).animate({
             #fontSize: '+=1px',
-            opacity:0.4
+            opacity: '-=0.66'
         })
         $(element).animate({
             #fontSize: '-=1px',
-            opacity:1
+            opacity:'+=0.66'
         })
 
 ###
@@ -102,6 +102,16 @@ flashChanged = (element) ->
     )
 ###
 angular.module('iReactive', ['ngAnimate'])
+    .directive('iFlash', [() ->
+        {
+            restrict: 'AE'
+            link: (scope, element, attrs) ->
+                scope.$watch(attrs.ngModel, (value) ->
+                    flashAnimate(element) if angular.isUndefined(attrs.iFlashOff) and attrs.iFlash != 'off' 
+                    return
+                )
+        }
+    ])
     .provider '$iReactable', [() ->
         ###
         *   arguments:
@@ -224,17 +234,13 @@ angular.module('iReactive', ['ngAnimate'])
                             return
                         )
 
-                    # animate it when ngModel value changed 
+                    # animate it when ngModel value changed
+                    ### use the i-flash diretive now
                     scope.$watch(attrs.ngModel, (value) ->
-                        flashChanged(element) if options.flashed
-                        ###
-                        $animate.addClass(element, 'i-flash-animation', () ->
-                            $animate.removeClass(element, 'i-flash-animation')
-                            return true
-                        )
-                        ###
+                        flashAnimate(element) if options.flashed
                         return
                     )
+                    ###
 
 
                     element.addClass('iReactable'.snake_case('-'))
@@ -279,6 +285,10 @@ angular.module('iReactive', ['ngAnimate'])
                         #links.push(link)
                         links.push(iReactablelink)
                         return (scope, elm, attrs, ctrl) ->
+                            if angular.isUndefined attrs.iFlash
+                                directive = $injector.get('iFlash'+'Directive')[0]
+                                link = directive.compile(tElement, tAttrs, transclude)
+                                links.push(link)
                             #attrs.$set('tooltip', '') # It's too late, the attrs.$observe not work well
                             for link in links
                                 link(scope, elm, attrs, ctrl)
