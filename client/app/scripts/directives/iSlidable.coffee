@@ -78,7 +78,21 @@ angular.module('iReactive.slidable', ['iReactive'])
     .directive('iSlidable', ['$iReactable', ($iReactable) ->
         dragManager = new DragManager()
         aProcessEvent = (ngModelCtrl, options, scope, element, attrs, nextValueFn) ->
+            _$body = $('body')
+            oldCursor = _$body.css('cursor')
             options.hint = "Drag it to adjust @#{attrs.ngModel}'s value"
+            _updateCursor = (value)->
+                el = $(element)
+                if value >= options.range.max
+                    _$body.css(cursor: 'w-resize')
+                    el.css(cursor: 'w-resize')
+                else if value <= options.range.min
+                    _$body.css(cursor: 'e-resize')
+                    el.css(cursor: 'e-resize')
+                else
+                    _$body.css(cursor: 'col-resize')
+                    el.css(cursor: 'col-resize')
+                return
             _reset = ->
                 now = new Date()
                 if now - options.lastClick < 500
@@ -86,14 +100,14 @@ angular.module('iReactive.slidable', ['iReactive'])
                         ngModelCtrl.$setViewValue(options.defaultValue);
                         ngModelCtrl.$render();
                     )
-                    #model.assign(scope, options.defaultValue)
+                    _updateCursor(options.defaultValue)
                 options.lastClick = now
                 return
 
             _onDrag = ({ x_start, y_start, x_delta, y_delta }) ->
                 options.range.mulStep = Math.floor(x_delta / 5)
-                #value = model(scope) #scope[options.bind]
                 value = nextValueFn(ngModelCtrl.$modelValue, options, false)
+                _updateCursor(value)
                 scope.$apply( ()->
                     ngModelCtrl.$setViewValue(value)
                 )
@@ -101,6 +115,8 @@ angular.module('iReactive.slidable', ['iReactive'])
 
             _stopDragging = ->
                 element.removeClass('active')
+                _updateCursor(ngModelCtrl.$modelValue)
+                _$body.css('cursor', oldCursor)
 
             _startDragging = (e) ->
                 if !options.readonly
