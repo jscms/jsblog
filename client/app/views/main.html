@@ -5,8 +5,8 @@
 
   <span ng-model="myvar" i-clickable="{range:{min:1,max:50, step:1}}" ng-readonly="checked">another {{myvar}}!</span>
   <span ng-model="myvar" ng-bind-template="Third {{myvar}}!" i-clickable="{range:{min:1,max:50, step:1}}" ng-readonly="!checked"></span>
-  <span ng-model="myvar" ng-bind-template="another {{myvar}}!" i-clickable="{range:{min:1,max:50, step:1}}" ng-readonly="checked"></span>
-  <span ng-model="myvar1" ng-init="myvar1=2" i-clickable="{range:{min:1,max:50, step:1}}" ng-readonly="checked">myvar1 {{myvar1}}!</span>
+  <span ng-model="myvar" flashed="false" ng-bind-template="another11 {{myvar}}!" i-clickable="{range:{min:1,max:50, step:1}}" ng-readonly="checked"></span>
+  <span ng-model="myvar1" ng-init="myvar1=2" class="i-flash-animation" ng-class="{disabled:disabled}" i-clickable="{range:{min:1,max:50, step:1}}" ng-readonly="checked">myvar1 {{myvar1}}!</span>
   <!--p>You now have</p>
   <ul>
       <li class="glyphicon glyphicon-ok" ng-repeat="thing in awesomeThings">{{thing}}</li>

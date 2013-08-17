@@ -61,7 +61,47 @@ class HintCss extends CustomHint
 
 Hint = HintCss
 
-angular.module('iReactive', [])
+flashChanged = (element) ->
+    ###
+    jQuery(element).css({
+        position:'relative',
+        left:0,
+        opacity:0.5
+    })
+    ###
+    if !$(element).is(':animated')
+        $(element).animate({
+            #fontSize: '+=1px',
+            opacity:0.4
+        })
+        $(element).animate({
+            #fontSize: '-=1px',
+            opacity:1
+        })
+
+###
+    .animation('.i-flash-animation', ()->
+        addClass : (element, className, done) ->
+                jQuery(element).css({
+                    position:'relative',
+                    left:-10,
+                    opacity:0
+                })
+                jQuery(element).animate({
+                    left:0,
+                    opacity:1
+                }, done)
+
+        removeClass : (element, className, done) ->
+                jQuery(element).css({
+                    opacity:0.5
+                })
+                jQuery(element).animate({
+                    opacity:1
+                }, done)
+    )
+###
+angular.module('iReactive', ['ngAnimate'])
     .provider '$iReactable', [() ->
         ###
         *   arguments:
@@ -86,6 +126,8 @@ angular.module('iReactive', [])
             values: null,
             # enable/disable hint
             hintOn: true,
+            # whether flash the element when ngModel changed
+            flashed: true,
             # the hint text
             hint: undefined,
             # the range may be a object, a list or a func
@@ -147,13 +189,13 @@ angular.module('iReactive', [])
             values[config.index]
 
 
-        this.$get = [ '$injector', '$parse', '$timeout', ($injector, $parse, $timeout) ->
+        this.$get = [ '$injector', '$parse', '$timeout', '$animate', ($injector, $parse, $timeout, $animate) ->
             (aDirectiveName, aEvent) ->
                 iReactablelink = (scope, element, attrs, ngModelCtrl) ->
                     if(!ngModelCtrl) then return # do nothing if no ng-model
-                    options = angular.extend({}, defaultOptions, globalOptions )
+                    options = angular.extend({}, defaultOptions, globalOptions)
                     options = angular.extend(options, scope.$eval(attrs[aDirectiveName]))
-                    #options.bind = attrs.bind if attrs.bind
+                    options.flashed = scope.$eval(attrs.flashed) if attrs.flashed?
                     options.range = angular.extend({}, defaultOptions.range, options.range, scope.$eval(attrs.range))
                     options.values = scope.$eval(attrs.values) if attrs.values
                     options.hint = scope.$eval(attrs.hint) if attrs.hint
@@ -181,6 +223,18 @@ angular.module('iReactive', [])
                             ngModelCtrl.$render()
                             return
                         )
+
+                    # animate it when ngModel value changed 
+                    scope.$watch(attrs.ngModel, (value) ->
+                        flashChanged(element) if options.flashed
+                        ###
+                        $animate.addClass(element, 'i-flash-animation', () ->
+                            $animate.removeClass(element, 'i-flash-animation')
+                            return true
+                        )
+                        ###
+                        return
+                    )
 
 
                     element.addClass('iReactable'.snake_case('-'))
