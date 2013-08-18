@@ -1,3 +1,14 @@
+pointerToXY = (e) ->
+    result = {pageX:0, pageY:0}
+    if e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel'
+        touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0]
+        result.pageX = touch.pageX
+        result.pageY = touch.pageY
+    else if e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave'
+        result.pageX = e.pageX
+        result.pageY = e.pageY
+    return result
+
 ###
 Handles drag operations- done globally to enable sliding action that starts on an element but continues across the window
 ###
@@ -49,25 +60,25 @@ class DragManager
     ###
     start: (e, view, direction) ->
         @isDragging = true
-        { pageX, pageY } = e
+        { pageX, pageY } = pointerToXY(e)
         @_direction = direction
         @_dragStartX = pageX
         @_dragStartY = pageY
         @_draggingTarget = view
-        @_$window.on('mousemove', @_drag)
-        @_$window.on('mouseup', @_stop)
+        @_$window.on('mousemove touchmove', @_drag)
+        @_$window.on('mouseup touchend touchcancel', @_stop)
         @_$body.addClass("dragging-#{ @_direction }")
 
     _drag: (e) =>
-        { pageX, pageY } = e
+        { pageX, pageY } = pointerToXY(e)
         ui = @_assembleUI(pageX, pageY)
         @_draggingTarget.onDrag?(ui)
 
     _stop: (e) =>
-        @_$window.off('mousemove', @_drag)
-        @_$window.off('mouseup', @_stop)
+        @_$window.off('mousemove touchmove', @_drag)
+        @_$window.off('mouseup touchend touchcancel', @_stop)
         if @_draggingTarget?
-            { pageX, pageY } = e
+            { pageX, pageY } = pointerToXY(e)
             ui = @_assembleUI(pageX, pageY)
             @_draggingTarget.stopDragging?(ui)
             @_reset()
@@ -106,7 +117,7 @@ angular.module('iReactive.slidable', ['iReactive'])
                 return
 
             _onDrag = ({ x_start, y_start, x_delta, y_delta }) ->
-                options.range.mulStep = Math.floor(x_delta / 5)
+                options.range.mulStep = Math.floor(x_delta / 15)
                 value = nextValueFn(ngModelCtrl.$modelValue, options, false)
                 _updateCursor(value)
                 scope.$apply( ()->
@@ -139,6 +150,6 @@ angular.module('iReactive.slidable', ['iReactive'])
                     _reset()
                 return
             )
-            element.bind('mousedown', _startDragging)
+            element.bind('mousedown touchstart', _startDragging)
         return $iReactable('iSlidable', aProcessEvent)
     ])
