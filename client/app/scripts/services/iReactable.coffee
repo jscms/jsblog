@@ -28,6 +28,7 @@ class CustomHint
                 @_off()
         else
             @_off()
+        return
 
 # the internal Hint class for bootstrap tooltip
 # class HintTooltip
@@ -42,13 +43,16 @@ class HintCss extends CustomHint
         else
             @element.removeClass('hint--info')
             @element.addClass('hint--error')
+        return
     _off: () ->
         @element.removeClass('hint--info')
         @element.removeClass('hint--error')
         @element.removeClass('hint--top')
-        @attrs.$set('data-hint', '')
+        @element.removeAttr('data-hint')
+        return
     _set: (text) ->
         @attrs.$set('data-hint', text)
+        return
     init: () ->
         #if @enabled()
         ###
@@ -221,10 +225,7 @@ angular.module('iReactive', ['ngAnimate'])
 
                     # model -> UI
                     ngModelCtrl.$render =  () ->
-                        if !options.readonly
-                            element.addClass('editable')
-                        else
-                            element.removeClass('editable')
+                        element.toggleClass('editable', !options.readonly)
                         vHint.apply attrs
                         return
 
