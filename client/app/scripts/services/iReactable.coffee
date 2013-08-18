@@ -106,6 +106,15 @@ flashAnimate = (element) ->
     )
 ###
 angular.module('iReactive', ['ngAnimate'])
+    .directive('iHighlighted', [() ->
+        {
+            restrict: 'AE'
+            link: (scope, element, attrs) ->
+                scope.$watch(attrs.ngModel, (value, oldValue) ->
+                    element.toggleClass('highlighted', angular.isUndefined(attrs.iHighlightedOff) and attrs.iHighlighted != 'off')
+                )
+        }
+    ])
     .directive('iFlash', [() ->
         {
             restrict: 'AE'
@@ -226,6 +235,7 @@ angular.module('iReactive', ['ngAnimate'])
                     # model -> UI
                     ngModelCtrl.$render =  () ->
                         element.toggleClass('editable', !options.readonly)
+                        attrs.$set("readonly", "readonly") if options.readonly and angular.isUndefined attrs.readonly
                         vHint.apply attrs
                         return
 
