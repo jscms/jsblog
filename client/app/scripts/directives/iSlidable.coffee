@@ -79,10 +79,10 @@ angular.module('iReactive.slidable', ['iReactive'])
         dragManager = new DragManager()
         aProcessEvent = (ngModelCtrl, options, scope, element, attrs, nextValueFn) ->
             _$body = $('body')
-            oldCursor = _$body.css('cursor')
+            oldBodyStyle = _$body.attr('style')
             options.hint = "Drag it to adjust @#{attrs.ngModel}'s value"
+            el = $(element)
             _updateCursor = (value)->
-                el = $(element)
                 if value >= options.range.max
                     _$body.css(cursor: 'w-resize')
                     el.css(cursor: 'w-resize')
@@ -101,6 +101,7 @@ angular.module('iReactive.slidable', ['iReactive'])
                         ngModelCtrl.$render();
                     )
                     _updateCursor(options.defaultValue)
+                    #model.assign(scope, options.defaultValue)
                 options.lastClick = now
                 return
 
@@ -116,7 +117,12 @@ angular.module('iReactive.slidable', ['iReactive'])
             _stopDragging = ->
                 element.removeClass('active')
                 _updateCursor(ngModelCtrl.$modelValue)
-                _$body.css('cursor', oldCursor)
+                if oldBodyStyle?
+                    _$body.attr('style', oldBodyStyle)
+                else
+                    _$body.removeAttr('style')
+                el.removeAttr('style')
+                return
 
             _startDragging = (e) ->
                 if !options.readonly

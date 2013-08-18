@@ -106,8 +106,9 @@ angular.module('iReactive', ['ngAnimate'])
         {
             restrict: 'AE'
             link: (scope, element, attrs) ->
-                scope.$watch(attrs.ngModel, (value) ->
-                    flashAnimate(element) if angular.isUndefined(attrs.iFlashOff) and attrs.iFlash != 'off' 
+                scope.$watch(attrs.ngModel, (value, oldValue) ->
+                    if value != oldValue
+                        flashAnimate(element) if angular.isUndefined(attrs.iFlashOff) and attrs.iFlash != 'off' 
                     return
                 )
         }
@@ -228,7 +229,8 @@ angular.module('iReactive', ['ngAnimate'])
                         return
 
                     if angular.isDefined attrs.ngReadonly  # watch the readonly variable changing.
-                        scope.$watch(attrs.ngReadonly, (value) ->
+                        scope.$watch(attrs.ngReadonly, (value, oldValue) ->
+                            #if value != oldValue
                             options.readonly = !!value  # readonly is true
                             ngModelCtrl.$render()
                             return
