@@ -12,7 +12,14 @@ $GlyphiconsPath: "./fonts";
 $element_color              : rgba(0,0,255,0.3);
 $element_hover_color        : rgba(0,0,255,1);
 $element_active_color       : rgba(0,0,190,1);
-$read_only_element_color    : rgba(130,130,130,0.4);
+$element_highlight_color    : rgba(247,230,143,0.4);
+$element_read_only_color    : rgba(130,130,130,0.4);
+$blockquote_color           : rgba(0,113,188,0.2);
+
+@mixin highlighted-element($color:$element_highlight_color) {
+    background-color: $color;
+}
+
 
 /* Put your CSS here */
 html, body {
@@ -34,6 +41,52 @@ body {
 .i-slidable {
     cursor: col-resize;
 }
+
+body.highlighted .i-reactable {
+    @include highlighted-element();
+}
+
+body.collapsed-code {
+    .i-editable {
+        height      : 2.4rem;
+        overflow    : hidden;
+        &::after {
+            position    : absolute;
+            top         : 0;
+            left        : 0;
+            right       : 0;
+            bottom      : 0;
+            content     : "";
+            display     : block;
+            z-index     : 4;
+            @include background-image(linear-gradient(top, rgba(255,255,255,0) 0%, rgba(250,250,248,1) 100%));
+        }
+    }
+}
+
+.CodeMirror {
+    border-radius   : 0;
+    background      : transparent;
+    height          : auto;
+    font-size       : 0.8rem;
+    margin-left     : -53px;
+
+    .CodeMirror-gutters {
+        border      : 0;
+        background  : transparent;
+    }
+
+    .CodeMirror-linenumber {
+        color: $blockquote_color !important;
+    }
+}
+
+.CodeMirror-scroll {
+    height      : auto;
+    overflow-y  : hidden;
+    overflow-x  : auto;
+}
+
 .i-reactable {
     //display: inline;
     border-bottom: 1px dotted $element_color;
@@ -42,8 +95,12 @@ body {
     background-color: transparent;
 
     &[readonly] {
-        border-bottom-color: $read_only_element_color;
+        border-bottom-color: $element_read_only_color;
         cursor: not-allowed;
+    }
+
+    &.highlighted {
+        @include highlighted-element();
     }
 
     &.editable {
