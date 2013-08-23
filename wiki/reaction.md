@@ -20,7 +20,7 @@ Note: attr > value
     * u can use "ng-readonly" for using attribute.
   * values: 
     * null: a number ForLoop
-    * array: In a List, [1,3,4,8]
+    * array: In a List, [1,3,4,8, 'a', 'b']
     * function
       * In a custom rangeFunc:
           rangeFn = (value, config, looped)->
@@ -50,15 +50,32 @@ Note: attr > value
   * language: the language of the source code, the default is coffeescript.
   * canvas: true/false, show canvas or not
   * console: true/false, if true show debug and error info here
-* i-editor: derived from ui-codemirror
+* i-editor: derived from ui-codemirror(but i wish can div and textarea together...)
     * editor: visible, collapsed, editable
       * collapsed: the code collapsed or not.
+
+
+
+## Markdown Reactive Format Extension
+
+The Markdown Reactive Format Extension is similar to the regular Markdown syntax
+for links. the displayed text is in the between the brackets, `[]`, the variable
+and other configurations is in the following braces, `{}`, it's a json object.
+
+* [result is ?]{variable: 3} :  variable = 3;  "result is {{variable}}"
+* [result]{variable} :  variable="result";{{variable}}
+* [20 dsjds]{variable: "10..100 by 10", adjust:"click" } : variable=20, range in 10..100 step = 10
+  the default is slide mode, but can change to click or auto mode.
+* [light on]{variable: ["on", "half-on", "off"]}
+  the default is click mode, but can change to slide or auto mode.
+* ![]{}: used to render something.
+
 
 
 ## Dev Internal
 
 * display value:
-  * `<div ng-bind="var" i-show-changed/>`
+  * `<div ng-bind="var" i-flash/>`
 * reactive value:
   * `<div ng-bind-template="result is {{variable}}" i-clickable="{variable: "10..100 by 10"}" i-show-changed/>`
 
@@ -70,13 +87,3 @@ http://jsfiddle.net/dalcib/6kabF/2/   --
 http://jsfiddle.net/simpulton/GeAAB/  -- sharemsg
 http://jsfiddle.net/simpulton/EMA5X/  -- animateoin
 
-
-## Markdown Reactive Format Extension
-
-* [result is ?]{variable: 3} :  variable = 3;  "result is {{variable}}"
-* [result]{variable} :  variable="result";{{variable}}
-* [20 dsjds]{variable: "10..100 by 10", adjust:"click" } : variable=20, range in 10..100 step = 10
-  the default is slide mode, but can change to click or auto mode.
-* [light on]{variable: ["on", "half-on", "off"]}
-  the default is click mode, but can change to slide or auto mode.
-* ![]{}
