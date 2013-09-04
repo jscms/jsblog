@@ -28,6 +28,7 @@ class CustomHint
                 @_off()
         else
             @_off()
+        return
 
 # the internal Hint class for bootstrap tooltip
 # class HintTooltip
@@ -42,13 +43,16 @@ class HintCss extends CustomHint
         else
             @element.removeClass('hint--info')
             @element.addClass('hint--error')
+        return
     _off: () ->
         @element.removeClass('hint--info')
         @element.removeClass('hint--error')
         @element.removeClass('hint--top')
-        @attrs.$set('data-hint', '')
+        @element.removeAttr('data-hint')
+        return
     _set: (text) ->
         @attrs.$set('data-hint', text)
+        return
     init: () ->
         #if @enabled()
         ###
@@ -102,6 +106,15 @@ flashAnimate = (element) ->
     )
 ###
 angular.module('iReactive', ['ngAnimate'])
+    .directive('iHighlighted', [() ->
+        {
+            restrict: 'AE'
+            link: (scope, element, attrs) ->
+                scope.$watch(attrs.ngModel, (value, oldValue) ->
+                    element.toggleClass('highlighted', angular.isUndefined(attrs.iHighlightedOff) and attrs.iHighlighted != 'off')
+                )
+        }
+    ])
     .directive('iFlash', [() ->
         {
             restrict: 'AE'
@@ -221,10 +234,8 @@ angular.module('iReactive', ['ngAnimate'])
 
                     # model -> UI
                     ngModelCtrl.$render =  () ->
-                        if !options.readonly
-                            element.addClass('editable')
-                        else
-                            element.removeClass('editable')
+                        element.toggleClass('editable', !options.readonly)
+                        attrs.$set("readonly", "readonly") if options.readonly and angular.isUndefined attrs.readonly
                         vHint.apply attrs
                         return
 

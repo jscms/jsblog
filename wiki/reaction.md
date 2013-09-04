@@ -15,12 +15,12 @@ Note: attr > value
 
 * i-clickable/i-slidable/i-playable
 
-  * bind: variable
+  * ngModel: the variable to control
   * readonly: true/false (must be using in parameters) 
     * u can use "ng-readonly" for using attribute.
   * values: 
     * null: a number ForLoop
-    * array: In a List, [1,3,4,8]
+    * array: In a List, [1,3,4,8, 'a', 'b']
     * function
       * In a custom rangeFunc:
           rangeFn = (value, config, looped)->
@@ -34,32 +34,48 @@ Note: attr > value
       * step: 2, null means step = 1
       * minIn: true, null means true
       * maxIn: true
-* i-show-changed: to show the changed value in document.
-  * delay: show time.
-  * effect: fade
+* i-flash: to show the changed value in document.
+  * i-falsh-off: used in attribute.
+  * off: used in options
+  * effect: not impl.
+  * delay: not impl.
+* i-playable: image/htmlElement carousel
+  * delay: 100ms
+  * effect: transition effect
+  * paused:
+  * goto:
+  * onState:
+* i-executable: the ngModel is the source code can be excutable. the element's text is running result.
+  * ngModel: the source code in it
+  * language: the language of the source code, the default is coffeescript.
+  * canvas: true/false, show canvas or not
+  * console: true/false, if true show debug and error info here
+* i-editor: derived from ui-codemirror(but i wish can div and textarea together...)
+    * editor: visible, collapsed, editable
+      * collapsed: the code collapsed or not.
 
 
-* act-click
-* act-slide
-* act-play: {delay: 100ms, effect="", paused: true, goto:"index", onState: "" }
-* act-type = {var:'title', type:'number'}
-  `<input ng-model="title" />`
 
+## Markdown Reactive Format Extension
 
-ng-model="value" 
+The Markdown Reactive Format Extension is similar to the regular Markdown syntax
+for links. the displayed text is in the between the brackets, `[]`, the variable
+and other configurations is in the following braces, `{}`, it's a json object.
 
-or {{val}}
+* [result is ?]{variable: 3} :  variable = 3;  "result is {{variable}}"
+* [result]{variable} :  variable="result";{{variable}}
+* [20 dsjds]{variable: "10..100 by 10", adjust:"click" } : variable=20, range in 10..100 step = 10
+  the default is slide mode, but can change to click or auto mode.
+* [light on]{variable: ["on", "half-on", "off"]}
+  the default is click mode, but can change to slide or auto mode.
+* ![]{}: used to render something.
 
-ng-react="click|slide, range=[1..10]+1"
-range=['ab','cc', 'df']
-
-clickable="range: "
 
 
 ## Dev Internal
 
 * display value:
-  * `<div ng-bind="var" i-show-changed/>`
+  * `<div ng-bind="var" i-flash/>`
 * reactive value:
   * `<div ng-bind-template="result is {{variable}}" i-clickable="{variable: "10..100 by 10"}" i-show-changed/>`
 
@@ -71,55 +87,3 @@ http://jsfiddle.net/dalcib/6kabF/2/   --
 http://jsfiddle.net/simpulton/GeAAB/  -- sharemsg
 http://jsfiddle.net/simpulton/EMA5X/  -- animateoin
 
-I have to say that Angular is far too strict with private scopes. 
-Many useful methods are hidden deeply inside closures and are not accesible from the app code. 
-I think exposing them to public could make the whole Angular more flexible.
-
-                    var directive=$injector.get(directiveName+'Directive')[0];
-                    var link=directive.compile(tElement, tAttrs, transclude);
-                    links.push(link);
-                }
-
-
-                return function(scope, elm, attrs, ctrl) {
-                    for (var i=0;i<links.length;i++){
-
-                        links[i](scope, elm, attrs, ctrl);
-                    }
-                };
-
-
-http://jsfiddle.net/vojtajina/YdAsa/
-Binding directive from another directive
-
-You can apply directive from directive, but not sure why would you do that. Something like this should work:
-
-angular.directive('first', function(expression, element) {
-  var compiler = this;
-  // compile....
-  return function(instance) {
-    var scope = this;
-    // link...
-  };
-});
-
-angular.directive('second', function(expression, element) {
-  // apply compile fn of first directive
-  var firstLinker = angular.directive('first').call(this, 'some-expression', element);
-
-  return function(instance) {
-    // apply linker of the first directive
-    firstLinker.call(this, instance);
-  };
-});
-
-
-## Markdown Reactive Format Extension
-
-* [result is ?]{variable: 3} :  variable = 3;  "result is {{variable}}"
-* [result]{variable} :  variable="result";{{variable}}
-* [20 dsjds]{variable: "10..100 by 10", adjust:"click" } : variable=20, range in 10..100 step = 10
-  the default is slide mode, but can change to click or auto mode.
-* [light on]{variable: ["on", "half-on", "off"]}
-  the default is click mode, but can change to slide or auto mode.
-* ![]{}
