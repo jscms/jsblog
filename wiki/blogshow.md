@@ -71,7 +71,7 @@ User's blog Folder:
     * keywords: 
     * description:
     * url:
-  * authors:
+  * authors: = it can be in a single file(authors.yml).
     * riceball:
       * name: Riceball LEE
       * email: snowyu.lee@gamil.com
@@ -80,11 +80,14 @@ User's blog Folder:
   * Category1/my.md
 * public/ : the default outputed folder.
   * index.html: frontpage
+  * index.json: the items list of this category
   * Category1/index.html
   * Category1/my.html
   * Category1/my.md
 * layouts/: the addtional layout path if any.
 * assets/ : the addtional assert path if any.
+* index.html: the main application entry
+
 
 CategoryPage(CollectionPage):
 
@@ -98,7 +101,15 @@ CategoryPage(CollectionPage):
   * Author
   * Summary
 * Navbar()
- 
+
+ContentPage
+
+* TOC
+* NavBar
+* Title
+* Author
+* Summary
+* Content
 
 Generation files:
 
@@ -124,6 +135,11 @@ Generation files:
   * the article content
 
 ### Workflow
+
+* scan folders to generate infomation files:
+  * item's list
+  * sitemap
+  * tag cloud
 
 #### Layout
 
@@ -174,6 +190,8 @@ bower install supports git://xxxx
   * JS
     * Angular
     * Docpad
+    * https://github.com/paulmillr/chokidar watch folder
+    * https://github.com/isaacs/node-glob
   * CSS
     * groundwork/Bootstrap?/Foundation?
     * http://css-tricks.com/triangle-breadcrumbs/
