@@ -141,7 +141,31 @@ Generation files:
   * sitemap
   * tag cloud
 
-#### Layout
+#### Specification
+
+* Presentation Concept
+  * Category
+  * post/page/partial
+* Internal Concept
+  * Folder: can be a category or content, check the meta info to determine. the default is category.
+    * index.md: the meta info and content in it.
+  * Template/Macro(handlebar.js/Hogan.js)
+  * MetaInfo
+    * id/slug/name: the default is the file name.
+    * type: category, post, page, script, partial, layout, asset, macro, media/css(js/icon/img), the default is category if the file name is "index"
+      * media/asset means this folder is a media/asset collection container.
+    * index: the display order on list(sortByIndex).
+    * created:  the default is the file created time.
+    * modified: the default is the file modified time.
+    * author: the default is the author in global configuration.
+    * tags:
+    * public: true/false
+    * title: the default is the first level header.
+    * summary: the default is the first section less than 1024 characters.
+
+
+
+### Layout
 
 * Navbar
 * //breadcrumbs?
@@ -181,6 +205,62 @@ npm install xxx --save-dev
 bower install xxx --save
 bower install supports git://xxxx
 
+### Dev Internal
+
+I plan to use the yeoman as the blog generator(It is not necessary though).
+
+the main programming language is the Literate CoffeeScript with markdown.
+
+the source code is in the src folder:
+
+- src\
+  - index.md
+  - model\
+    - iCmsResource.md
+    - iCmsConfig.md
+    - icmsContent.md
+  - iCmsFolderParser.md
+  - iCmsFileReader.md
+  - iCmsFileWriter.md
+  - iCmsTemplateEngine.md
+- bin\
+  -icms
+
+the 'index.md' is the main application entry.
+
+
+    iFolderParser = require("./iCmsFolderParser")
+    iFileReader   = require("./iCmsFileReader")
+    iFileWriter   = require("./iCmsFileWriter")
+
+
+* iCmsResource
+  - iCmsConfiguration
+  - iCmsContent: the category, post, page all are content.
+* iCmsFolderParser
+* iCmsFileReader
+  * getMetaInfo()
+  * getContent()
+* iCmsFileWriter
+* iCmsTemplateEngine(the default is handlebar)
+
+#### Folder Structure
+
+- RootFolder/
+  - index.md: the global configuration here
+      * type: config
+      * outdir: the default output dir is 'public'
+      * site:
+        * title: the site's title
+        * keywords: 
+        * description:
+        * url:
+        * language: the default site language if any. the default language is English if no.
+      * authors: = it can be in a single file(authors.md).
+        * riceball: the author id can be referenced on other place.
+          * name: Riceball LEE
+          * email: snowyu.lee@gamil.com
+
 
 #### Dev Toolkit chain
 
@@ -218,6 +298,7 @@ use foundation css framework:
    http://stackoverflow.com/questions/14602156/angularjs-with-reveal-js
    http://www.yearofmoo.com/2012/10/more-angularjs-magic-to-supercharge-your-webapp.html#how-to-make-sure-your-directives-are-run-after-your-scope-is-ready
 
+      https://github.com/G33kLabs/Node.VaSH nodejs blog with redis and sso
       reveal.js git://github.com/hakimel/reveal.js/
       zurb-reveal git://github.com/zurb/reveal.git
       nucleus-angular-revealing-panel git://github.com/nucleus-angular/revealing-panel.git
