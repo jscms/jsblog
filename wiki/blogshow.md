@@ -145,7 +145,7 @@ Generation files:
 
 * Presentation Concept
   * Category
-  * post/page/partial
+  * Content: post/page/partial
 * Internal Concept
   * Folder: can be a category or content, check the meta info to determine. the default is category.
     * index.md: the meta info and content in it.
