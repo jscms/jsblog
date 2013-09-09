@@ -214,7 +214,7 @@ the main programming language is the Literate CoffeeScript with markdown.
 the source code is in the src folder:
 
 - src\
-  - index.md
+  - README.md
   - model\
     - iCmsResource.md
     - iCmsConfig.md
@@ -226,7 +226,7 @@ the source code is in the src folder:
 - bin\
   -icms
 
-the 'index.md' is the main application entry.
+the 'README.md' is the main application entry.
 
 
     iFolderParser = require("./iCmsFolderParser")
@@ -325,6 +325,7 @@ use foundation css framework:
       http://www.w3cplus.com/MetroUICSS/ Metro UI CSS中文版
       http://jsfiddle.net/highcharts/AyUbx/
       http://rabidgadfly.com/ perfect for angularjs tut
+      https://github.com/posativ/acrylamid static blog generator in python with incremental rendering
       rename ngMobile to ngTouch now in git 
 
 
