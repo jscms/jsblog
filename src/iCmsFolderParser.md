@@ -54,10 +54,10 @@ The default folder/category readme file is README.md or index.md.
                 catch (e)
                     return e
                 @setCache(aFilename, vCache)
-            if vCache.config.public?
-                vCache
-            else
+            if vCache.config.public? and vCache.config.public == false
                 null
+            else
+                vCache
         processFile: (aFilename, aOptions, aFnIterator) ->
             vCache = @getFileInfo(aFilename)
             if vCache instanceof Error then return vCache
