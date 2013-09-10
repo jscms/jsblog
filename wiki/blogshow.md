@@ -199,6 +199,7 @@ Generation files:
 * https://github.com/localmotors/quantum-angularity AngularJS image gallery 计划了很多功能
 * http://benjaminmock.de/bezoom-jquery-plugin/ 放大镜
 * https://github.com/HubSpot/executr
+* https://github.com/xreader/inplaceeditor
 
 ### Dev Misc
 
