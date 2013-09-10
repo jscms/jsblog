@@ -144,7 +144,8 @@ Generation files:
 #### Specification
 
 * Presentation Concept
-  * Category
+  * Category: can contain sub-category and contents
+    * index page to list the sub-category and contents
   * Content: post/page/partial
 * Internal Concept
   * Folder: can be a category or content, check the meta info to determine. the default is category.

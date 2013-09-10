@@ -10,7 +10,8 @@
     "findup-sync": "~0.1.2",
     "js-yaml": "~2.1.0",
     "walk": "~2.2.1",
-    "minimatch": "~0.2.12"
+    "minimatch": "~0.2.12",
+    "string": "~1.5.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
