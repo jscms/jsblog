@@ -144,9 +144,11 @@ Generation files:
 #### Specification
 
 * Presentation Concept
-  * Category: can contain sub-category and contents
-    * index page to list the sub-category and contents
-  * Content: post/page/partial
+  * Content: need to be rendered.
+    * Category: can contain sub-category and contents
+      * index page to list the sub-category and contents
+    * File: post/page/partial
+  * assets: just copy directly.
 * Internal Concept
   * Folder: can be a category or content, check the meta info to determine. the default is category.
     * index.md: the meta info and content in it.

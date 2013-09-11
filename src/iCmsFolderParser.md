@@ -14,6 +14,7 @@ iCmsFolderParser
     minimatch = require('minimatch')
     S  = require('string');
     _  = require('lodash')
+    Resource  = require("./model/iCmsResource")
 
 Scan the specified directory to get the configuration and meta info.
 The README.md in the 'root' directory is the global configuration.
@@ -22,8 +23,8 @@ YAML is extracted from the the top of a file between matching separators:
 
 The default folder/category readme file is README.md or index.md.
 
-    README  = 'README.md'
-    README2 = 'index.md'
+    README_NAME = 'README.md'
+    INDEX_NAME  = 'index.md'
 
     YamlFrontMatterRegEx = ///
         ^([\-=`.~_]{3})\r?\n    # one line three same character [-=`.~] is the seperator
@@ -34,17 +35,17 @@ The default folder/category readme file is README.md or index.md.
 
     class iCmsFolderParser
         # cache the meta info and content of files
-        cachedFiles: {}
+        cachedContents: {}
         setCache: (aFilename, config, content) ->
-            cachedFiles[aFilename] = 
+            cachedContents[aFilename] = 
                 config: config
                 content: content
             return
         getCache: (aFilename) ->
-            cachedFiles[aFilename]
-        getFileInfo: (aFilename) ->
+            cachedContents[aFilename]
+        getContentInfo: (aFilename) ->
             vCache = @getCache(aFilename)
-            if vCache == null and fs.existsSync(aFilename)
+            if vCache == null and fs.existsSync(aFilename) and Resource.isContent(aFilename)
                 contents = fs.readFileSync(aFilename, 'utf8')
                 if contents instanceof Error then return contents
                 vCache = {}
@@ -58,8 +59,8 @@ The default folder/category readme file is README.md or index.md.
                 null
             else
                 vCache
-        processFile: (aFilename, aOptions, aFnIterator) ->
-            vCache = @getFileInfo(aFilename)
+        processContent: (aFilename, aOptions, aFnIterator) ->
+            vCache = @getContentInfo(aFilename)
             if vCache instanceof Error then return vCache
             if vCache?
                 vCache.config = _.extend(vCache.config, aOptions)
@@ -74,13 +75,18 @@ The default folder/category readme file is README.md or index.md.
             s = '{' +s + ',' + aSkips.join(',') + '}' if _.isArray(aSkips) and aSkips.length > 0
             #vPaths = minimatch.match(vPaths, '!'+s, {})
             vPaths = (f for f in vPaths when not minimatch(f, s))
-            vFiles = vDirs  = []
+            vFiles = vCategories  = []
             vPathReadme = null
             for f in vPaths
                 fstat = fs.statSync(path.join(aPath, f))
                 if fstat
                     if fstat.isDirectory()
-                        vDirs.push(f)
+                        vCache = @getContentInfo(path.join(aPath, f, README_NAME))
+                        vCache = @getContentInfo(path.join(aPath, f, INDEX_NAME)) unless vCache?
+                        if vCache? or vCache.type? or vCache.type == 'category'
+                            vCategories.push f
+                        else
+                            vFiles.push f
                     if fstat.isFile()
                         if f == README
                             vPathReadme = README
@@ -95,7 +101,7 @@ The default folder/category readme file is README.md or index.md.
             if result instanceof Error then return result
             if vConfig.type == 'category'
         scan: (aPath, aOptions, aFnIterator) ->
-            @cachedFiles = {}
+            @cachedContents = {}
             aOptions.root = aPath
             siteReadme = path.join(aPath, 'README.md')
             if not fs.existsSync(siteReadme) then siteReadme = path.join(aPath, 'index.md')
