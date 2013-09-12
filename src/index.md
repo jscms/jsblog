@@ -30,6 +30,7 @@ command-line arguments:
 
     program = require('commander')
     program.version(require('../package').version)
+    process.logging = process.logging || require('./util/logger');
 
 ### init Command
 
