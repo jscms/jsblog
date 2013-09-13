@@ -65,7 +65,7 @@ User's blog Folder:
   * outPath     = public #the default value
   * docPath     = .      #the default value
   * layoutPath  = ./layouts  # the addtional layout path if any. the default is null.
-  * assertPath  = ./asserts  # the addtional assert path if any. the default is null.
+  * assetPath  = ./assets  # the addtional asset path if any. the default is null.
   * site:
     * title: the site's title
     * keywords: 
@@ -144,11 +144,11 @@ Generation files:
 #### Specification
 
 * Presentation Concept
-  * Content: need to be rendered.
+  * Resource: need to be processed.
     * Category: can contain sub-category and contents
       * index page to list the sub-category and contents
-    * File: post/page/partial
-  * assets: just copy directly.
+    * Content: post/page/partial
+    * Assets: just copy directly.
 * Internal Concept
   * Folder: can be a category or content, check the meta info to determine. the default is category.
     * index.md: the meta info and content in it.

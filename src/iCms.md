@@ -7,8 +7,6 @@ author: riceball
 iCMS
 ====
 
-    module.exports = iCMS
-
     iFolderParser = require("./iCmsFolderParser")
     iFileReader   = require("./iCmsFileReader")
     iFileWriter   = require("./iCmsFileWriter")
@@ -44,3 +42,7 @@ The init method is used to genertate the empty iCMS content site.
             )
             return
         server: (path, options) ->
+
+
+
+    module.exports = iCMS

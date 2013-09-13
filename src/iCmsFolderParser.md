@@ -7,7 +7,6 @@ author: riceball
 iCmsFolderParser
 ================
 
-    module.exports = iCmsFolderParser
     yaml = require('js-yaml')
     path = require('path')
     fs   = require('fs')
@@ -39,6 +38,7 @@ The default folder/category readme file is README.md or index.md.
         # cache the meta info and content of files
         cachedContents: {}
         options: {}
+        constructor: (@path, @options) ->
         setCache: (aFilename, config, content) ->
             cachedContents[aFilename] = 
                 config: config
@@ -159,3 +159,6 @@ The default folder/category readme file is README.md or index.md.
             processCategory cat for cat in vPathInfo.categories
             # todo: for every file in path
             #df
+
+
+    module.exports = iCmsFolderParser
