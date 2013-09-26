@@ -15,8 +15,6 @@ Handlebars Template File Converter
         @type: "Template"
         @priority: 0
 
-        constructor: () ->
-
         @compile: (aContent) ->
             return Handlebars.compile(aContent)
 
@@ -25,6 +23,7 @@ Handlebars Template File Converter
             return vTemplate(aConfig)
 
 
+    iCmsConverter.register(iCmsHandlebars)
     module.exports = iCmsHandlebars
 
 
