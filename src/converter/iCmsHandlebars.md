@@ -18,8 +18,12 @@ Handlebars Template File Converter
 
         constructor: () ->
 
+        @compile: (aContent) ->
+            return Handlebars.compile(aContent)
+
         @run: (aContent, aConfig) ->
-            return aContent
+            vTemplate = Handlebars.compile(aContent)
+            return vTemplate(aConfig)
 
         @register: (aClass) ->
             registereds = iCmsConverter._registereds
