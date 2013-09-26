@@ -51,7 +51,7 @@ parser.scan(aPath, aDefaultOptions)
         _cachedContents: {}
         options: {}
         onFile: (aConfig, aFilePath, aContent)->
-        onAsset: (aFilePath)->
+        onAsset: (aConfig, aFilePath)->
 
         constructor: (@path, @options) ->
         setCache: (aFilename, config, content) ->
@@ -99,8 +99,11 @@ parser.scan(aPath, aDefaultOptions)
             processAsset asset for asset in vPathInfo.assets
             processCategory cat for cat in vPathInfo.categories
         processAsset: (aFilename) ->
+            vConfig = _.extend({}, @options)
+            vCache = @getContentInfo(aFilename)
+            vConfig = if vCache? then _.extend(vConfig, vCache.config)
             if _.isFunction(@onAsset)
-                return @onAsset(aFilename)
+                return @onAsset(vConfig, aFilename)
         processFile: (aFilename) ->
             vCache = @getContentInfo(aFilename)
             if vCache?
@@ -136,7 +139,10 @@ parser.scan(aPath, aDefaultOptions)
                         vCache = @getContentInfo(path.join(aPath, f, INDEX_NAME)) unless vCache?
                         if vCache? and vCache.config and vCache.config.type? and vCache.config.type != 'category'
                             vCache.config.isDir = true
-                            vFiles.push f
+                            if vCache.config.type? and vCache.config.type == 'asset'
+                                vAssets.push f
+                            else
+                                vFiles.push f
                         else
                             vCategories.push f
                     if fstat.isFile()
@@ -159,7 +165,7 @@ parser.scan(aPath, aDefaultOptions)
             #if result instanceof Error then return result
             #if vConfig.type == 'category'
             return result
-        scan: (aPath, aOptions, aFnIterator) ->
+        scan: (aPath, aOptions) ->
             @_cachedContents = {}
             aOptions.root = aPath
             @options = _.extend(@options, aOptions)
