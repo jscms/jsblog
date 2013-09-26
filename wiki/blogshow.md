@@ -243,11 +243,9 @@ the 'README.md' is the main application entry.
   - iCmsConfiguration
   - iCmsContent: the category, post, page all are content.
 * iCmsFolderParser
-* iCmsFileReader
-  * getMetaInfo()
-  * getContent()
-* iCmsFileWriter
-* iCmsTemplateEngine(the default is handlebar)
+* iCmsConverter
+  * iCmsHandlebarConverter
+  //* iCmsTemplateEngine(the default is handlebar)
 
 #### Folder Structure
 
