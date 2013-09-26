@@ -41,16 +41,14 @@ Usage
 
 ```coffee
 parser = new iCmsFolderParser(aPath, aDefaultOptions)
-parser.onCategory = (aConfig, aFilePath, aContent) ->
-parser.onFile = 
-parser.onAsset = 
+parser.onFile = (aConfig, aFilePath, aContent) ->
+parser.onAsset = (aFilePath) ->
 ```
 
     class iCmsFolderParser
         # cache the meta info and content of files
         _cachedContents: {}
         options: {}
-        onCategory: (aConfig, aFilePath, aContent)->
         onFile: (aConfig, aFilePath, aContent)->
         onAsset: (aFilePath)->
         constructor: (@path, @options) ->
@@ -98,15 +96,17 @@ parser.onAsset =
             processFile file for file in vPathInfo.files
             processAsset asset for asset in vPathInfo.assets
             processCategory cat for cat in vPathInfo.categories
-        processAsset: (aFilename, aOptions, aFnIterator) ->
-        processFile: (aFilename, aOptions, aFnIterator) ->
+        processAsset: (aFilename) ->
+            if _.isFunction(@onAsset)
+                return @onAsset(aFilename)
+        processFile: (aFilename) ->
             vCache = @getContentInfo(aFilename)
             if vCache?
-                vConfig = _.extend({}, aOptions)
+                vConfig = _.extend({}, @options)
                 vConfig = _.extend(vConfig, vCache.config)
                 #if vConfig.name?
-                if _.isFunction(aFnIterator)
-                    return aFnIterator(vConfig, aFilename, vCache.content)
+                if _.isFunction(@onFile)
+                    return @onFile(vConfig, aFilename, vCache.content)
             return null
         getPathInfo: (aPath, aSkips) ->
             #aOptions.path = aPath
