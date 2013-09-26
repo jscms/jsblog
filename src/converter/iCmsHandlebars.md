@@ -2,15 +2,14 @@ Handlebars Template File Converter
 ==================================
 
 
-    Handlebars = require('handlebars')
+    iCmsConverter = require('./iCmsConverter')
+    Handlebars    = require('handlebars')
 
 [Extensive collection of Handlebars helpers](http://assemble.io/helpers/):
 
-    require('handlebars-helpers').register(Handlebars, {});
+    require('handlebars-helpers').register(Handlebars, {})
 
-    class iCmsHandlebars
-
-        @_registereds: []
+    class iCmsHandlebars extends iCmsConverter
 
         @name: "handlebars"
         @type: "Template"
@@ -25,17 +24,6 @@ Handlebars Template File Converter
             vTemplate = Handlebars.compile(aContent)
             return vTemplate(aConfig)
 
-        @register: (aClass) ->
-            registereds = iCmsConverter._registereds
-            result = aClass not in registereds
-            registereds.push aClass if result
-            return result
-
-        @unregister: (aClass) ->
-            registereds = iCmsConverter._registereds
-            result = registereds.indexOf(aClass)
-            registereds.splice(result, 1) if result >= 0
-            return result >= 0
 
     module.exports = iCmsHandlebars
 
