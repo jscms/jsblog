@@ -18,14 +18,15 @@ iCmsFolderParser
     log = logger('folder:parser')
 
 Scan the specified directory to get the configuration and meta info.
-The README.md in the 'root' directory is the global configuration.
-The configuration is a YAML front-matter in the file.
-YAML is extracted from the the top of a file between matching separators:
+The README.md in the 'root' directory is the global configuration and description for the site.
 
 The default folder/category readme file is README.md or index.md.
 
     README_NAME = 'README.md'
     INDEX_NAME  = 'index.md'
+
+The configuration is a YAML front-matter in the file.
+YAML is extracted from the the top of a file between matching separators:
 
     YamlFrontMatterRegEx = ///
         ^([\-=`.~_]{3})\r?\n    # one line three same character [-=`.~] is the seperator
@@ -34,18 +35,32 @@ The default folder/category readme file is README.md or index.md.
         (.*)$                   # the content
     ///g
 
+
+Usage
+------
+
+```coffee
+parser = new iCmsFolderParser(aPath, aDefaultOptions)
+parser.onCategory = (aConfig, aFilePath, aContent) ->
+parser.onFile = 
+parser.onAsset = 
+```
+
     class iCmsFolderParser
         # cache the meta info and content of files
-        cachedContents: {}
+        _cachedContents: {}
         options: {}
+        onCategory: (aConfig, aFilePath, aContent)->
+        onFile: (aConfig, aFilePath, aContent)->
+        onAsset: (aFilePath)->
         constructor: (@path, @options) ->
         setCache: (aFilename, config, content) ->
-            cachedContents[aFilename] = 
+            @_cachedContents[aFilename] = 
                 config: config
                 content: content
             return
         getCache: (aFilename) ->
-            cachedContents[aFilename]
+            @_cachedContents[aFilename]
         getContentInfo: (aFilename) ->
             vCache = @getCache(aFilename)
             if not vCache? and fs.existsSync(aFilename) and Resource.isContent(aFilename)
@@ -72,6 +87,12 @@ The default folder/category readme file is README.md or index.md.
         processCategory: (aPath, aOptions, aFnIterator) ->
             # 
             vPathInfo = @getPathInfo(aPath, aOptions['skips'])
+            vSiteReadme = @getContentInfo(path.join(aPath, vPathInfo.readme))
+            if vSiteReadme?
+                vConfig = vSiteReadme.config
+                vConfig.categories = vPathInfo.categories
+                vConfig.files = vPathInfo.files
+                vConfig.assets = vPathInfo.assets
             processFile path.join(aPath, vPathInfo.readme)
 
             processFile file for file in vPathInfo.files
@@ -89,6 +110,7 @@ The default folder/category readme file is README.md or index.md.
             return null
         getPathInfo: (aPath, aSkips) ->
             #aOptions.path = aPath
+            result = {}
             result.path = aPath
             vPaths = fs.readdirSync(aPath)
 
@@ -136,7 +158,7 @@ The default folder/category readme file is README.md or index.md.
             #if vConfig.type == 'category'
             return result
         scan: (aPath, aOptions, aFnIterator) ->
-            @cachedContents = {}
+            @_cachedContents = {}
             aOptions.root = aPath
             @options = _.extend(@options, aOptions)
             vPathInfo = @getPathInfo(aPath, @options['skips'])
@@ -146,6 +168,9 @@ The default folder/category readme file is README.md or index.md.
                 @options.authors = {'admin':{name: 'Admin', email: 'admin@example.com'}} unless @options.authors?
                 if vSiteReadme?
                     vConfig = vSiteReadme.config
+                    vConfig.categories = vPathInfo.categories
+                    vConfig.files = vPathInfo.files
+                    vConfig.assets = vPathInfo.assets
                     #vConfig.id = vConfig.slug = vConfig.name = path.basename(INDEX_NAME, path.extname(INDEX_NAME))
                     vConfig.parent = ''
                     if vConfig.site? and _.isObject(vConfig.site)
