@@ -40,9 +40,10 @@ Usage
 ------
 
 ```coffee
-parser = new iCmsFolderParser(aPath, aDefaultOptions)
+parser = new iCmsFolderParser()
 parser.onFile = (aConfig, aFilePath, aContent) ->
 parser.onAsset = (aFilePath) ->
+parser.scan(aPath, aDefaultOptions)
 ```
 
     class iCmsFolderParser
@@ -51,6 +52,7 @@ parser.onAsset = (aFilePath) ->
         options: {}
         onFile: (aConfig, aFilePath, aContent)->
         onAsset: (aFilePath)->
+
         constructor: (@path, @options) ->
         setCache: (aFilename, config, content) ->
             @_cachedContents[aFilename] = 
