@@ -19,7 +19,9 @@
     "isbinaryfile": "~0.1.9",
     "iconv-lite": "~0.2.11",
     "chalk": "~0.2.1",
-    "text-table": "~0.1.1"
+    "text-table": "~0.1.1",
+    "handlebars": "~1.0.12",
+    "handlebars-helpers": "~0.3.6"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
