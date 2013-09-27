@@ -4,6 +4,8 @@ Abstract File Converter And Converter Factory
 
 Convert the file content from one format to another.
 
+    _ = require('lodash')
+
     class iCmsConverter
         @_registereds: []
 
@@ -14,6 +16,12 @@ Convert the file content from one format to another.
         constructor: () ->
 
         @run: (aContent, aConfig) ->
+            return aContent
+
+        @runAll: (aContent, aConfig) ->
+            vConverters = _.sortBy(@_registereds, 'priority')
+            for converter in vConverters
+                aContent = converter.run(aContent, aConfig)
             return aContent
 
         @register: (aClass) ->
@@ -29,5 +37,3 @@ Convert the file content from one format to another.
             return result >= 0
 
     module.exports = iCmsConverter
-
-
