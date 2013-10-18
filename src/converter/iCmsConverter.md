@@ -15,6 +15,11 @@ Convert the file content from one format to another.
 
         constructor: () ->
 
+        @getByName: (aName) ->
+            for converter in @_registereds
+                return converter if converter.name == aName
+            return null
+
         @run: (aContent, aConfig) ->
             return aContent
 
@@ -22,6 +27,13 @@ Convert the file content from one format to another.
             vConverters = _.sortBy(@_registereds, 'priority')
             for converter in vConverters
                 aContent = converter.run(aContent, aConfig)
+            return aContent
+
+        # run converters in list
+        @runList: (aContent, aConfig, aConverterList) ->
+            for name in aConverterList
+                vConverter = iCmsConverter.getByName(name)
+                aContent = vConverter.run(aContent, aConfig) if vConverter?
             return aContent
 
         @register: (aClass) ->
