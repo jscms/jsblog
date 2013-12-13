@@ -40,10 +40,10 @@ The obvious one is the root of your website: my-website. Here is the list, in or
 
 1. System.
    This level is contained in itself. It is how all the default settings and resources are loaded.
-2. my-website.
-   This is your base directory.
-3. Theme.
+2. Theme.
    The installed theme, which is covered in more detail below.
+3. my-website.
+   This is your base directory.
 
 The cascade searches in these directories in order. This means a file in the theme folder will overload the same file in my-website which in turn will overload the same file in system.
 
