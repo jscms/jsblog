@@ -1,7 +1,7 @@
 jsBlog
 ======
 
-The static site generator writen via javascript.
+The static site generator writen via coffeescript.
 
 
 ## Concerts
