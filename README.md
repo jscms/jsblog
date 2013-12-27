@@ -98,14 +98,9 @@ Custom programming logic can be added easily via the plugin architecture. You'd 
 
 ## Directory Structure
 
-* config.yml
+* index.md
 * public/       : the default compiled output folder
-* pages/        : treated as standalone pages on the site
+* documents/    : treated as standalone pages on the site
   * index.md    : the frontpage on the site 
-  * posts/      : blog posts.
-* media/
-* includes/
-* plugins/
-* themes/
-* widgets/
-
+* layouts/      : the addtional layout path if any.
+* assets/       : the addtional assert path if any.
